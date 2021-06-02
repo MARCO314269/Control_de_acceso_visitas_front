@@ -12,7 +12,7 @@
         <h3><i class="fa fa-user"></i> Datos personales </h3>
       </div>
   <div>
-    <b-form @submit="onSubmit" @click="uploadPhoto" v-if="true">
+    <b-form @submit="onSubmit" v-if="true">
       <b-form-group id="input-group-1" label="Nombre(s):" label-for="input-1"
       >
         <b-form-input
@@ -178,7 +178,7 @@
   export default {
 //    name: "Camera",
     components: {
-        VuePictureSwipe
+        VuePictureSwipe,
     },
     data() {
       return {
@@ -192,7 +192,9 @@
           nombre_contacto_emergencia: '',
           email: '',
           genero: null,
-          items: ''
+          items: '',
+          Rostro: '',
+          Identificiacion: ''
         },
         generos: [{ text: 'Seleccionar', value: null }, 'Masculino', 'Femenino'],
         isCameraOpen: false,
@@ -239,8 +241,8 @@
               context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
               const dataUrl = self.$refs.canvas.toDataURL().replace("data:image/png;base64,", "");
               console.log(dataUrl)
+              this.form.Rostro = dataUrl
               self.addToPhotoGallery(dataUrl);
-              self.uploadPhoto(dataUrl);
               self.isCameraOpen = false;
               self.stopCameraStream();
           }, FLASH_TIMEOUT);
@@ -254,16 +256,6 @@
                 h: this.canvasHeight,
               }
           )
-      },
-      uploadPhoto(dataURL){
-          let capturedPhotoFile = this.dataURLtoFile(dataURL, "")
-          let formData = new FormData()
-          formData.append('file', capturedPhotoFile)
-          console.log(formData)
-          //Upload image api
-           axios.post('http://localhost:5000/visitantes', formData).then(response => {
-             console.log(response)
-          })
       },
       toggleCamera2(){
         if(this.isCameraOpen2){
@@ -300,8 +292,8 @@
               context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
               const dataUrl = self.$refs.canvas.toDataURL().replace("data:image/png;base64,", "");
               console.log(dataUrl)
+              this.form.Identificiacion = dataUrl
               self.addToPhotoGallery(dataUrl);
-              self.uploadPhoto(dataUrl);
               self.isCameraOpen = false;
               self.stopCameraStream2();
           }, FLASH_TIMEOUT);
@@ -317,18 +309,21 @@
               }
           )
       },
-      uploadPhoto2(dataURL){
-          let capturedPhotoFile = this.dataURLtoFile(dataURL, "")
-          let formData = new FormData()
-          formData.append('file', capturedPhotoFile)
-          //Upload image api
-           axios.post('http://localhost:5000/visitantes', formData).then(response => {
-             console.log(response)
-          })
-      },
       onSubmit(event) {
         event.preventDefault()
         alert(JSON.stringify(this.form))
+        axios.post('http://127.0.0.1:5000/detalle_visita', JSON.stringify(this.form)).then(response => {
+          console.log(response.data);
+           alert("enviado");
+        }).catch(error => {
+          this.msgErr = error;
+          if(error.response) {
+              this.msgErr = error.response.data['exceptionLongDescription'];
+          }
+          this.$modal.show('mensaje-exito');
+        }).finally(
+          () => this.loading = false
+        );
       },
       onReset(event) {
         event.preventDefault()

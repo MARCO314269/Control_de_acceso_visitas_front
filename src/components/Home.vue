@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     getVisitantes () {
-      const path = 'http://localhost:5000/visitantes'
+      const path = 'http://localhost:5000/video_capture'
       axios.get(path).then((respuesta) => {
         this.visitantes = respuesta.data
       })
