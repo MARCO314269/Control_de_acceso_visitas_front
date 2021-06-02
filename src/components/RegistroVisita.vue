@@ -62,7 +62,7 @@
 
       </b-form-group>
 
-      <b-form-group id="input-group-3" label="¿Esta sera una visita recurrente semanal?" v-slot="{ ariaDescribedby }">
+      <b-form-group id="input-group-3" label="¿Esta será una visita recurrente semanal?" v-slot="{ ariaDescribedby }">
         <b-form-checkbox-group
           v-model="form.visita_semanal_recurrente_activa"
           id="checkboxes-3"
@@ -73,21 +73,10 @@
         </b-form-checkbox-group>
       </b-form-group>
 
-      <b-form-group id="input-group-4" label="¿Esta sera una visita recurrente mensual?" v-slot="{ ariaDescribedby }">
+      <b-form-group id="input-group-4" label="¿Esta será una visita recurrente mensual?" v-slot="{ ariaDescribedby }">
         <b-form-checkbox-group
           v-model="form.visita_mensual_recurrente_activa"
           id="checkboxes-4"
-          :aria-describedby="ariaDescribedby"
-        >
-          <b-form-checkbox value="true">Si</b-form-checkbox>
-          <b-form-checkbox value="false">No</b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form-group>
-
-      <b-form-group id="input-group-5" label="¿Dar acceso por unica ocasion?" v-slot="{ ariaDescribedby }">
-        <b-form-checkbox-group
-          v-model="form.visita_permitida_activa"
-          id="checkboxes-5"
           :aria-describedby="ariaDescribedby"
         >
           <b-form-checkbox value="true">Si</b-form-checkbox>
@@ -130,8 +119,8 @@ import axios from 'axios'
           fecha_inicio: null,
           fecha_fin: null,
           nombre_visita: '',
-          visita_semanal_recurrente_activa: [],
-          visita_mensual_recurrente_activa: [],
+          visita_semanal_recurrente_activa: ["false"],
+          visita_mensual_recurrente_activa: ["false"],
           visita_permitida_activa: ["true"]
         },
         inicio: null,
@@ -144,6 +133,7 @@ import axios from 'axios'
         event.preventDefault()
         this.form.fecha_inicio = moment(new Date(this.form.fecha_inicio)).format('DD/MM/YYYY hh:mm:ss');
         this.form.fecha_fin = moment(new Date(this.form.fecha_fin)).format('DD/MM/YYYY hh:mm:ss');
+        alert(JSON.stringify(this.form))
         axios.post('http://127.0.0.1:5000/detalle_visita', JSON.stringify(this.form)).then(response => {
           console.log(response.data);
            alert("enviado");
