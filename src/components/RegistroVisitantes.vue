@@ -8,11 +8,71 @@
          <h5>El lugar debe estar bien iluminado y se debe revisar que los datos de la identificación sean legibles en la imagen.</h5>
     </div>
   <div class="container my-4">
+  <div>
+    <b-form @submit="postRespuesta" v-if="mostrarCamaras"> 
+      <b-form-group id="input-group-10" label="Rostro:" label-for="input-10">
+        <div style="display: flex; justify-content: flex-start;">
+            <img style="height: 100px;" v-if="isCameraOpen"
+                 src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"
+                 class="button-img camera-shoot" @click="capture"/>
+            <div class="camera-button">
+                <button type="button" class="button is-rounded cam-button"
+                        style="margin-left: 10%; background-color: white; border: 0px;"
+                        @click="toggleCamera"
+                >
+                 <span v-if="!isCameraOpen"><img style="height: 100px;" class="button-img"
+                                src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
+                 <span v-else><img style="height: 100px;" class="button-img"
+                                src="https://img.icons8.com/material-outlined/50/000000/cancel.png"></span>
+                </button>
+            </div>
+        </div>
+        <div>
+            <div v-if="isCameraOpen" class="camera-canvas">
+                <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
+                <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
+            </div>
+        </div>
+        <vue-picture-swipe :items="items"></vue-picture-swipe>
+      </b-form-group>
+
+      <b-form-group id="input-group-11" label="Identificacion:" label-for="input-11">
+        <div class="camera-box">
+        <div style="display: flex; justify-content: flex-start;">
+            <img style="height: 100px;" v-if="isCameraOpen2"
+                 src="https://img.icons8.com/material-outlined/50/000000/camera--v1.png"
+                 class="button-img camera-shoot" @click="capture2"/>
+            <div class="camera-button">
+                <button type="button" class="button is-rounded cam-button"
+                        style="margin-left: 10%; background-color: white; border: 0px;"
+                        @click="toggleCamera2"
+                >
+                 <span v-if="!isCameraOpen2"><img style="height: 100px;" class="button-img"
+                                src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
+                 <span v-else><img style="height: 100px;" class="button-img"
+                                src="https://img.icons8.com/material-outlined/50/000000/cancel.png"></span>
+                </button>
+            </div>
+        </div>
+        <div>
+            <div v-if="isCameraOpen2" class="camera-canvas">
+                <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
+                <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
+            </div>
+         </div>
+         <vue-picture-swipe :items="items"></vue-picture-swipe>
+       </div>
+      </b-form-group>
+
+      <b-button type="submit" @submit="onSubmit" variant="primary">Validar</b-button>
+    </b-form>
+    <br>
+    <br>
+    <b-form @submit="onSubmit" v-if="match">
       <div class="form-header">       <!-- form header Datos personales -->    
         <h3><i class="fa fa-user"></i> Datos personales </h3>
       </div>
-  <div>
-    <b-form @submit="onSubmit" v-if="true">
+
       <b-form-group id="input-group-1" label="Nombre(s):" label-for="input-1"
       >
         <b-form-input
@@ -101,59 +161,6 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-10" label="Rostro:" label-for="input-10">
-        <div style="display: flex; justify-content: flex-start;">
-            <img style="height: 100px;" v-if="isCameraOpen"
-                 src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"
-                 class="button-img camera-shoot" @click="capture"/>
-            <div class="camera-button">
-                <button type="button" class="button is-rounded cam-button"
-                        style="margin-left: 10%; background-color: white; border: 0px;"
-                        @click="toggleCamera"
-                >
-                 <span v-if="!isCameraOpen"><img style="height: 100px;" class="button-img"
-                                src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
-                 <span v-else><img style="height: 100px;" class="button-img"
-                                src="https://img.icons8.com/material-outlined/50/000000/cancel.png"></span>
-                </button>
-            </div>
-        </div>
-        <div>
-            <div v-if="isCameraOpen" class="camera-canvas">
-                <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
-                <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
-            </div>
-        </div>
-        <vue-picture-swipe :items="items"></vue-picture-swipe>
-      </b-form-group>
-
-      <b-form-group id="input-group-11" label="Identificacion:" label-for="input-11">
-        <div class="camera-box">
-        <div style="display: flex; justify-content: flex-start;">
-            <img style="height: 100px;" v-if="isCameraOpen2"
-                 src="https://img.icons8.com/material-outlined/50/000000/camera--v1.png"
-                 class="button-img camera-shoot" @click="capture2"/>
-            <div class="camera-button">
-                <button type="button" class="button is-rounded cam-button"
-                        style="margin-left: 10%; background-color: white; border: 0px;"
-                        @click="toggleCamera2"
-                >
-                 <span v-if="!isCameraOpen2"><img style="height: 100px;" class="button-img"
-                                src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
-                 <span v-else><img style="height: 100px;" class="button-img"
-                                src="https://img.icons8.com/material-outlined/50/000000/cancel.png"></span>
-                </button>
-            </div>
-        </div>
-        <div>
-            <div v-if="isCameraOpen2" class="camera-canvas">
-                <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
-                <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
-            </div>
-         </div>
-         <vue-picture-swipe :items="items"></vue-picture-swipe>
-       </div>
-      </b-form-group>
 
       <b-button type="submit" @submit="onSubmit" variant="primary">Guardar</b-button>
       <b-button type="reset" @reset="onReset" variant="danger">Reiniciar</b-button>
@@ -162,6 +169,28 @@
       
     </div>
   </div><!-- ends header-->
+
+    <modal
+            name="Repuesta"
+            :clickToClose="false"
+            :reset="true"
+            :width="480"
+            :height="245">
+            <div class="card">
+                <div class="card-header">Respuesta de sistema</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <h4>Se presenta lo siguiente:</h4>
+                        <p>{{mostrarFormulario}}</p>
+                        <small>Favor de continuar o voler a intentar segun sea el caso</small>
+                    </div>
+
+                    <div class="form-group my-4" style="text-align: right;">
+                        <b-button variant="info" @click="openGen">Aceptar</b-button>
+                    </div>
+                </div>
+            </div>
+        </modal><!-- ends modal-->
 </div>
 
 </template>
@@ -191,8 +220,9 @@
           telefono_emergencia: null,
           nombre_contacto_emergencia: '',
           email: '',
-          genero: null,
-          items: '',
+          genero: null
+        },
+        form2:{
           Rostro: '',
           Identificiacion: ''
         },
@@ -202,10 +232,46 @@
         canvasHeight:470,
         canvasWidth:470,
         items: null,
+        match: true,//match
+        mostrarCamaras: true
 
      }
     },
     methods: {
+      getRespuesta(){
+          axios.get().then(response => {
+            response.data.forEach((value) => {
+              if(!value.estadoEnvio){
+                this.respuestaValida.push(value);
+                this.match=response.data;
+                this.mostrarCamaras=response.data;
+              }else{
+                this.respuestaInvalida.push(value);
+                this.match=response.data;
+                this.mostrarCamaras=response.data;
+              }
+            });
+        }).catch(() => {
+            this.$modal.show('Respuesta');
+            this.titulo = "Error!"
+            this.descripcion = "Ha ocurrido un error de nuestro lado, por favor vuelva a intentarlo más tarde."
+        })
+      },
+      postRespuesta(event) {
+        event.preventDefault()
+        alert(JSON.stringify(this.form2))
+        axios.post('http://127.0.0.1:5000/', JSON.stringify(this.form)).then(response => {
+          console.log(response.data);
+           alert("enviado");
+        }).catch(error => {
+          this.msgErr = error;
+          if(error.response) {
+              this.msgErr = error.response.data['exceptionLongDescription'];
+          }
+        }).finally(
+          () => this.loading = false
+        );
+      },
       toggleCamera(){
         if(this.isCameraOpen){
           this.isCameraOpen =false;
@@ -241,21 +307,11 @@
               context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
               const dataUrl = self.$refs.canvas.toDataURL().replace("data:image/png;base64,", "");
               console.log(dataUrl)
-              this.form.Rostro = dataUrl
+              this.form2.Rostro = dataUrl
               self.addToPhotoGallery(dataUrl);
               self.isCameraOpen = false;
               self.stopCameraStream();
           }, FLASH_TIMEOUT);
-      },
-      addToPhotoGallery(dataURI) {
-          this.items.push(
-              {
-                src: dataURI,
-                thumbnail: dataURI,
-                w: this.canvasWidth,
-                h: this.canvasHeight,
-              }
-          )
       },
       toggleCamera2(){
         if(this.isCameraOpen2){
@@ -278,12 +334,6 @@
               alert("Browser doesn't support or there is some errors." + error);
           });
       },
-      stopCameraStream2() {
-          let tracks = this.$refs.camera.srcObject.getTracks();
-          tracks.forEach(track => {
-              track.stop();
-          });
-      },
       capture2() {
           const FLASH_TIMEOUT = 50;
           let self = this;
@@ -292,22 +342,11 @@
               context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
               const dataUrl = self.$refs.canvas.toDataURL().replace("data:image/png;base64,", "");
               console.log(dataUrl)
-              this.form.Identificiacion = dataUrl
+              this.form2.Identificiacion = dataUrl
               self.addToPhotoGallery(dataUrl);
               self.isCameraOpen = false;
-              self.stopCameraStream2();
+              self.stopCameraStream();
           }, FLASH_TIMEOUT);
-      },
-      addToPhotoGallery2(dataURI) {
-          this.items.push(
-              {
-                src: dataURI,
-                thumbnail: dataURI,
-                w: this.canvasWidth,
-                h: this.canvasHeight,
-                alt: 'some numbers on a grey background' // optional alt attribute for thumbnail image
-              }
-          )
       },
       onSubmit(event) {
         event.preventDefault()
