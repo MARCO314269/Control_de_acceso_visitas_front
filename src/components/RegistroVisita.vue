@@ -119,9 +119,9 @@ import axios from 'axios'
           fecha_inicio: null,
           fecha_fin: null,
           nombre_visita: '',
-          visita_semanal_recurrente_activa: ["false"],
-          visita_mensual_recurrente_activa: ["false"],
-          visita_permitida_activa: ["true"]
+          visita_semanal_recurrente_activa: "false",
+          visita_mensual_recurrente_activa: "false",
+          visita_permitida_activa: "true"
         },
         inicio: null,
         fin: null,        
