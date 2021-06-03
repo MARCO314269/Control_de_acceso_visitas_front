@@ -31,7 +31,7 @@
               </div>
               <div class="col my-auto">
                 <div class="row">
-                  <b>+(52) 55 5593 3942</b>
+                 <a href="#"><b> (52) 55 5593 3942</b></a>
                 </div>
               </div>
             </div>
@@ -41,7 +41,7 @@
               </div>
               <div class="col my-auto">
                 <div class="row">
-                  <a href="#"><b>hola@petstore.ci.ultrasist.net</b></a>
+                  <a href="#"><b> contacto@ca.ultrasist.net</b></a>
                 </div>
               </div>
             </div>
@@ -94,7 +94,7 @@
         </div>
 
       </div>
-      <div class="footer-copyright text-center py-3 darker">© 2021 Derechos reervados</div>
+      <div class="footer-copyright text-center py-3 darker">ULTRASIST S.A DE C.V © 2021 Derechos reervados</div>
 
     </footer>
   </div>
