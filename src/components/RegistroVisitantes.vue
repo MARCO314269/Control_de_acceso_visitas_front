@@ -64,10 +64,10 @@
        </div>
       </b-form-group>
 
-      <b-button type="submit" @submit="onSubmit" variant="primary">Validar</b-button>
+      <b-button type="submit" @submit="postRespuesta" variant="primary">Validar</b-button>
+      <b-button type="reiniciar" @click="onResetCam"  variant="danger">Reiniciar</b-button>
     </b-form>
-    <br>
-    <br>
+
     <b-form @submit="onSubmit" v-if="match">
       <div class="form-header">       <!-- form header Datos personales -->    
         <h3><i class="fa fa-user"></i> Datos personales </h3>
@@ -162,35 +162,52 @@
       </b-form-group>
 
 
-      <b-button type="submit" @submit="onSubmit" variant="primary">Guardar</b-button>
-      <b-button type="reset" @reset="onReset" variant="danger">Reiniciar</b-button>
-    </b-form>
+      <b-button type="submit" @submit="onSubmit" variant="primary">Guardar</b-button>    </b-form>
   </div>
       
     </div>
   </div><!-- ends header-->
 
-    <modal
-            name="Repuesta"
-            :clickToClose="false"
-            :reset="true"
-            :width="480"
-            :height="245">
-            <div class="card">
-                <div class="card-header">Respuesta de sistema</div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <h4>Se presenta lo siguiente:</h4>
-                        <p>{{mostrarFormulario}}</p>
-                        <small>Favor de continuar o voler a intentar segun sea el caso</small>
-                    </div>
+        <modal 
+          name="modal-camaras" 
+          :clickToClose="false" 
+          :reset="true"
+          :width="480"
+          :height="245">
+          <div class="card">
+              <div class="card-header">Información</div>
+              <div class="card-body">
+                  <div class="form-group">
+                      <h6>El sistema detecta lo siguiente:</h6>
+                      <p>{{this.mensaje}}</p>
+                  </div>
 
-                    <div class="form-group my-4" style="text-align: right;">
-                        <b-button variant="info" @click="openGen">Aceptar</b-button>
-                    </div>
-                </div>
-            </div>
+                  <div class="form-group my-4" style="text-align: right;">
+                      <b-button variant="info" @reset="onResetCam" @click="closeModalCamaras">Aceptar</b-button>
+                  </div>
+              </div>
+          </div>
         </modal><!-- ends modal-->
+        
+        <modal 
+          name="modal-exito" 
+          :clickToClose="false" 
+          :reset="true"
+          :width="480"
+          :height="245">
+          <div class="card">
+              <div class="card-header">Información</div>
+              <div class="card-body">
+                  <div class="form-group">
+                      <h6>Tu informacion se guardo correctamente</h6>
+                  </div>
+                  <div class="form-group my-4" style="text-align: right;">
+                      <b-button variant="info" @click="closeModalExito">Aceptar</b-button>
+                  </div>
+              </div>
+          </div>
+        </modal><!-- ends modal-->
+
 </div>
 
 </template>
@@ -212,6 +229,7 @@
     data() {
       return {
         form: {
+          user_id: '',
           nombre: '',
           apellido_paterno: '',
           apellido_materno: '',
@@ -223,8 +241,9 @@
           genero: null
         },
         form2:{
-          Rostro: '',
-          Identificiacion: ''
+          id_detalle_visita: '1',
+          rostro_b64: '',
+          identificacion_b64: ''
         },
         generos: [{ text: 'Seleccionar', value: null }, 'Masculino', 'Femenino'],
         isCameraOpen: false,
@@ -232,37 +251,26 @@
         canvasHeight:470,
         canvasWidth:470,
         items: null,
-        match: true,//match
-        mostrarCamaras: true
+        match: '',
+        mostrarCamaras: true,
+        mensaje: ''
+
 
      }
     },
     methods: {
-      getRespuesta(){
-          axios.get().then(response => {
-            response.data.forEach((value) => {
-              if(!value.estadoEnvio){
-                this.respuestaValida.push(value);
-                this.match=response.data;
-                this.mostrarCamaras=response.data;
-              }else{
-                this.respuestaInvalida.push(value);
-                this.match=response.data;
-                this.mostrarCamaras=response.data;
-              }
-            });
-        }).catch(() => {
-            this.$modal.show('Respuesta');
-            this.titulo = "Error!"
-            this.descripcion = "Ha ocurrido un error de nuestro lado, por favor vuelva a intentarlo más tarde."
-        })
-      },
       postRespuesta(event) {
         event.preventDefault()
-        alert(JSON.stringify(this.form2))
-        axios.post('http://127.0.0.1:5000/', JSON.stringify(this.form)).then(response => {
+        axios.post('http://127.0.0.1:5000/analiza-imagenes',this.form2).then(response => {
           console.log(response.data);
-           alert("enviado");
+          this.id_detalle_visita=response;
+          this.mensaje=response.data.mensaje;
+          this.match=response.data.match;
+          this.mostrarCamaras=!this.match;
+        this.toggleCamera()
+        this.toggleCamera2()
+        this.stopCameraStream()
+          // alert(response.data.mensaje);
         }).catch(error => {
           this.msgErr = error;
           if(error.response) {
@@ -271,6 +279,22 @@
         }).finally(
           () => this.loading = false
         );
+        this.$modal.show('modal-camaras');
+      },
+      closeModalCamaras(){
+        this.$modal.hide('modal-camaras');
+      },
+      closeModalExito(){
+        this.$modal.hide('modal-exito');
+        this.form.nombre = ''
+        this.form.apellido_paterno = ''
+        this.form.apellido_materno = ''
+        this.form.genero = null
+        this.form.telefono_celular = null
+        this.form.telefono_particular = null
+        this.form.telefono_emergencia = null
+        this.form.nombre_contacto_emergencia = ''
+        this.form.email = ''
       },
       toggleCamera(){
         if(this.isCameraOpen){
@@ -307,7 +331,7 @@
               context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
               const dataUrl = self.$refs.canvas.toDataURL().replace("data:image/png;base64,", "");
               console.log(dataUrl)
-              this.form2.Rostro = dataUrl
+              this.form2.rostro_b64 = dataUrl
               self.addToPhotoGallery(dataUrl);
               self.isCameraOpen = false;
               self.stopCameraStream();
@@ -334,6 +358,17 @@
               alert("Browser doesn't support or there is some errors." + error);
           });
       },
+      addToPhotoGallery(dataURI) {
+          this.items.push(
+              {
+                  src: dataURI,
+                  thumbnail: dataURI,
+                  w: this.canvasWidth,
+                  h: this.canvasHeight,
+                  alt: 'some numbers on a grey background' // optional alt attribute for thumbnail image
+              }
+          )
+      },
       capture2() {
           const FLASH_TIMEOUT = 50;
           let self = this;
@@ -342,7 +377,7 @@
               context.drawImage(self.$refs.camera, 0, 0, self.canvasWidth, self.canvasHeight);
               const dataUrl = self.$refs.canvas.toDataURL().replace("data:image/png;base64,", "");
               console.log(dataUrl)
-              this.form2.Identificiacion = dataUrl
+              this.form2.identificacion_b64 = dataUrl
               self.addToPhotoGallery(dataUrl);
               self.isCameraOpen = false;
               self.stopCameraStream();
@@ -350,8 +385,8 @@
       },
       onSubmit(event) {
         event.preventDefault()
-        alert(JSON.stringify(this.form))
-        axios.post('http://127.0.0.1:5000/detalle_visita', JSON.stringify(this.form)).then(response => {
+        axios.post('http://127.0.0.1:5000/detalle_visita', this.form).then(response => {
+          this.user_id=response.data.user_id;
           console.log(response.data);
            alert("enviado");
         }).catch(error => {
@@ -359,29 +394,16 @@
           if(error.response) {
               this.msgErr = error.response.data['exceptionLongDescription'];
           }
-          this.$modal.show('mensaje-exito');
+          this.$modal.show('modal-exito');
         }).finally(
           () => this.loading = false
         );
       },
-      onReset(event) {
-        event.preventDefault()
-        // Reset our form values
-        this.form.nombre = ''
-        this.form.apellido_paterno = ''
-        this.form.apellido_materno = ''
-        this.form.genero = null
-        this.form.telefono_celular = null
-        this.form.telefono_emergencia = null
-        this.form.telefono_emergencia = null
-        this.form.email = ''
-        this.form.items = ''
-        // Trick to reset/clear native browser form validation state
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
-      }
+      onResetCam(){
+        this.toggleCamera()
+        this.toggleCamera2()
+        this.stopCameraStream()
+      },
     }
       
   }
