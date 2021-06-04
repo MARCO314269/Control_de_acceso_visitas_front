@@ -64,8 +64,8 @@
        </div>
       </b-form-group>
 
-      <b-button type="submit" @submit="postRespuesta" variant="primary">Validar</b-button>
-      <b-button type="reiniciar" @click="onResetCam"  variant="danger">Reiniciar</b-button>
+      <b-button :disabled="habilitaBoton" type="submit" @submit="postRespuesta" variant="primary">Validar</b-button>
+      <b-button :disabled="habilitaBoton3" type="reiniciar" @click="onResetCam"  variant="danger">Reiniciar</b-button>
     </b-form>
 
     <b-form @submit="onSubmit" v-if="match">
@@ -73,42 +73,48 @@
         <h3><i class="fa fa-user"></i> Datos personales </h3>
       </div>
 
-      <b-form-group id="input-group-1" label="Nombre(s):" label-for="input-1"
+      <b-form-group id="input-group-1" label="Nombre(s):" :class="className" :v="$v.form.nombre" label-for="input-1"
       >
         <b-form-input
           id="input-1"
-          v-model="form.nombre"
+          v-model="$v.form.nombre.$model"
+          :state="validateState('nombre')"
           type="Nombre(s)"
           placeholder="Ingresa tu nombre"
-          required
         ></b-form-input>
+        <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
+      
 
       <b-form-group id="input-group-2" label="Apellido Paterno:" label-for="input-2">
         <b-form-input
           id="input-2"
-          v-model="form.apellido_paterno"
+          v-model="$v.form.apellido_paterno.$model"
+          :state="validateState('apellido_paterno')"
           placeholder="Ingresa tu apellido paterno"
-          required
         ></b-form-input>
+        <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="input-group-3" label="Apellido Materno:" label-for="input-3">
         <b-form-input
           id="input-3"
-          v-model="form.apellido_materno"
+          v-model="$v.form.apellido_materno.$model"
+          :state="validateState('apellido_materno')"
           placeholder="Ingresa tu apellido materno"
-          required
         ></b-form-input>
+        <b-form-invalid-feedback id="input-1-live-feedback">Este campo no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="input-group-4" label="Genero:" label-for="input-4">
         <b-form-select
           id="input-4"
-          v-model="form.genero"
+          v-model="$v.form.genero.$model"
+          :state="validateState('genero')"
           :options="generos"
           required
         ></b-form-select>
+        <b-form-invalid-feedback id="input-1-live-feedback">Debes elegir una opción.</b-form-invalid-feedback>
       </b-form-group>
 
       <div class="form-header">         <!-- form header Datos de contacto -->   
@@ -118,51 +124,56 @@
       <b-form-group id="input-group-5" label="Telefono celular:" label-for="input-5">
         <b-form-input
           id="input-5"
-          v-model="form.telefono_celular"
+          v-model="$v.form.telefono_celular.$model"
+          :state="validateState('telefono_celular')"
           placeholder="Ingresa tu telefono celular"
-          required
         ></b-form-input>
+        <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe contener 10 digitos.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="input-group-6" label="Telefono particular:" label-for="input-6">
         <b-form-input
           id="input-6"
-          v-model="form.telefono_particular"
+          v-model="$v.form.telefono_particular.$model"
+          :state="validateState('telefono_particular')"
           placeholder="Ingresa tu telefono particular"
-          required
         ></b-form-input>
+        <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe contener 10 digitos.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="input-group-7" label="Telefono de emergencia:" label-for="input-7">
         <b-form-input
           id="input-7"
-          v-model="form.telefono_emergencia"
+          v-model="$v.form.telefono_emergencia.$model"
+          :state="validateState('telefono_emergencia')"
           placeholder="Ingresa tu telefono para emergencias"
-          required
         ></b-form-input>
+        <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe contener 10 digitos.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="input-group-8" label="Nombre de tu contacto de emergencia:" label-for="input-8">
         <b-form-input
           id="input-8"
-          v-model="form.nombre_contacto_emergencia"
+          v-model="$v.form.nombre_contacto_emergencia.$model"
+          :state="validateState('nombre_contacto_emergencia')"
           placeholder="Ingresa el nombre de tu contacto de emergencia"
-          required
         ></b-form-input>
+        <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="input-group-9" label="Correo electronico:" label-for="input-9">
       <b-form-input
           id="input-9"
-          v-model="form.email"
+          v-model="$v.form.email.$model"
+          :state="validateState('email')"
           type="email"
           placeholder="Ingresa tu correo electronico"
-          required
         ></b-form-input>
+        <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe ser una dirección de correo electronico valida.</b-form-invalid-feedback>
       </b-form-group>
 
 
-      <b-button type="submit" @submit="onSubmit" variant="primary">Guardar</b-button>    </b-form>
+      <b-button :disabled="habilitaBoton2" type="submit" @submit="onSubmit" variant="primary">Guardar</b-button>    </b-form>
   </div>
       
     </div>
@@ -202,7 +213,7 @@
                       <h6>Tu informacion se guardo correctamente</h6>
                   </div>
                   <div class="form-group my-4" style="text-align: right;">
-                      <b-button variant="info" @click="closeModalExito">Aceptar</b-button>
+                      <b-button variant="info" @click="closeModalExito" @submit="resetForm">Aceptar</b-button>
                   </div>
               </div>
           </div>
@@ -218,16 +229,31 @@
   import axios from 'axios';
   import "vue-range-slider/dist/vue-range-slider.css";
   import VuePictureSwipe from 'vue-picture-swipe';
+  import { validationMixin } from "vuelidate";
+  import { required, alpha, minLength, maxLength , integer, email} from "vuelidate/lib/validators";
 
   //import { mapMutations } from 'vuex'
 
+  const emaiRegex = new RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+
+
   export default {
-//    name: "Camera",
+    mixins: [validationMixin],
     components: {
         VuePictureSwipe,
     },
     data() {
       return {
+        generos: [{ text: 'Seleccionar', value: null }, 'Masculino', 'Femenino'],
+        isCameraOpen: false,
+        isCameraOpen2: false,
+        canvasHeight:470,
+        canvasWidth:470,
+        items: null,
+        match: '',
+        mostrarCamaras: true,
+        mensaje: '',
+
         form: {
           user_id: '',
           nombre: '',
@@ -240,25 +266,58 @@
           email: '',
           genero: null
         },
+        
         form2:{
           id_detalle_visita: '1',
           rostro_b64: '',
           identificacion_b64: ''
-        },
-        generos: [{ text: 'Seleccionar', value: null }, 'Masculino', 'Femenino'],
-        isCameraOpen: false,
-        isCameraOpen2: false,
-        canvasHeight:470,
-        canvasWidth:470,
-        items: null,
-        match: '',
-        mostrarCamaras: true,
-        mensaje: ''
-
-
+        }
      }
     },
+    validations: {
+    form: {
+      nombre: { required, minLength: minLength(3) },
+      apellido_paterno: { required, alpha, minLength: minLength(3) },
+      apellido_materno: { alpha, minLength: minLength(3) },
+      genero: { required },
+      telefono_celular: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
+      telefono_particular: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
+      telefono_emergencia: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
+      nombre_contacto_emergencia: { required, minLength: minLength(3) },
+      email: { required, email },
+      
+    }
+  },
+    computed: {
+      habilitaBoton: function() {
+        var dato = true
+          && this.form2.rostro_b64
+          && this.form2.identificacion_b64
+          return !dato;
+      },
+      habilitaBoton2: function() {
+        var dato = true
+          && this.form.nombre && this.form.nombre.length>3
+          && this.form.apellido_paterno && this.form.apellido_paterno.length>3
+          && this.form.apellido_materno && this.form.apellido_materno.length>3
+          && this.form.telefono_celular && this.form.telefono_celular.length==10
+          && this.form.telefono_particular && this.form.telefono_particular.length==10
+          && this.form.telefono_emergencia && this.form.telefono_emergencia.length==10
+          && this.form.nombre_contacto_emergencia && this.form.nombre_contacto_emergencia.length>3
+          && this.form.email && emaiRegex.test(this.form.email)
+          return !dato;
+      },
+      habilitaBoton3: function() {
+        var dato = true
+          && this.form2.rostro_b64
+          return !dato;
+      },
+    },
     methods: {
+      validateState(nombre) {
+       const { $dirty, $error } = this.$v.form[nombre];
+       return $dirty ? !$error : null;
+      },
       postRespuesta(event) {
         event.preventDefault()
         axios.post('http://127.0.0.1:5000/analiza-imagenes',this.form2).then(response => {
@@ -286,15 +345,6 @@
       },
       closeModalExito(){
         this.$modal.hide('modal-exito');
-        this.form.nombre = ''
-        this.form.apellido_paterno = ''
-        this.form.apellido_materno = ''
-        this.form.genero = null
-        this.form.telefono_celular = null
-        this.form.telefono_particular = null
-        this.form.telefono_emergencia = null
-        this.form.nombre_contacto_emergencia = ''
-        this.form.email = ''
       },
       toggleCamera(){
         if(this.isCameraOpen){
@@ -385,7 +435,9 @@
       },
       onSubmit(event) {
         event.preventDefault()
+        alert(JSON.stringify(this.form))
         axios.post('http://127.0.0.1:5000/detalle_visita', this.form).then(response => {
+          this.$v.form.$touch();
           this.user_id=response.data.user_id;
           console.log(response.data);
            alert("enviado");
@@ -399,6 +451,19 @@
           () => this.loading = false
         );
       },
+      resetForm(){
+        this.form = {
+        nombre: '',
+        apellido_paterno: '',
+        apellido_materno: '',
+        genero: null,
+        telefono_celular: null,
+        telefono_particular: null,
+        telefono_emergencia: null,
+        nombre_contacto_emergencia: '',
+        email: ''
+        }
+      },
       onResetCam(){
         this.toggleCamera()
         this.toggleCamera2()
@@ -408,3 +473,4 @@
       
   }
 </script>
+
