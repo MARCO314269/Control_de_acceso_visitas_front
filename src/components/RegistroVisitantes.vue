@@ -172,7 +172,6 @@
         <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe ser una dirección de correo electronico valida.</b-form-invalid-feedback>
       </b-form-group>
 
-
       <b-button :disabled="habilitaBoton2" type="submit" @submit="onSubmit" variant="primary">Guardar</b-button>    </b-form>
   </div>
       
@@ -226,21 +225,17 @@
 
 
 <script>
+
   import axios from 'axios';
   import "vue-range-slider/dist/vue-range-slider.css";
-  import VuePictureSwipe from 'vue-picture-swipe';
   import { validationMixin } from "vuelidate";
   import { required, alpha, minLength, maxLength , integer, email} from "vuelidate/lib/validators";
 
-  //import { mapMutations } from 'vuex'
-
   const emaiRegex = new RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-
 
   export default {
     mixins: [validationMixin],
     components: {
-        VuePictureSwipe,
     },
     data() {
       return {
