@@ -16,50 +16,52 @@
       <b-form-group id="input-group-1" label="Nombre evento:" label-for="input-1">
         <b-form-input
           id="input-1"
-          v-model="form.nombre_visita"
+          v-model="$v.form.nombre_visita.$model"
+          :state="validateState('nombre_visita')"
           placeholder="Ingresa el nombre de tu evento"
-          required
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio de tu evento:" label-for="input-2">
+      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio de tu evento:" :state="validateState('fecha_inicio')" label-for="input-2">
           <div>
             <datetime
                   type="datetime"
-                  v-model="form.fecha_inicio"
+                  v-model="$v.form.fecha_inicio.$model"
                   input-class="my-class"
                   value-zone="America/Mexico_City"
                   placeholder="DD/MM/YYYY   00:00"
                   :format="{ day: 'numeric', month: 'numeric', year: 'numeric',  hour: 'numeric', minute: 'numeric'}"
-                  :phrases="{ok: 'Continue', cancel: 'Exit'}"
+                  :phrases="{ok: 'Continuar', cancel: 'Salir'}"
                   :hour-step="1"
                   :minute-step="10"
                   :week-start="7"
+                  :min-datetime="new Date().toISOString()"
                   use12-hour
                   auto
-                  required
               ></datetime>
-              <br>
-        <b-card-text>Selecciona la fecha y hora fin de tu evento:</b-card-text>
-          <div>
-            <datetime
-                  type="datetime"
-                  v-model="form.fecha_fin"
-                  input-class="my-class"
-                  value-zone="America/Mexico_City"
-                  placeholder="DD/MM/YYYY   00:00"
-                  :format="{ day: 'numeric', month: 'numeric', year: 'numeric',  hour: 'numeric', minute: 'numeric'}"
-                  :phrases="{ok: 'Continue', cancel: 'Exit'}"
-                  :hour-step="1"
-                  :minute-step="10"
-                  :week-start="7"
-                  use12-hour
-                  auto
-                  required
-              ></datetime>
-        </div>
     </div>
+      <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
+      </b-form-group>
 
+      <b-form-group id="input-group-5" label="Selecciona la fecha y hora fin de tu evento:" label-for="input-5">
+          <div>
+              <datetime
+              type="datetime"
+              v-model="form.fecha_fin"
+              input-class="my-class"
+              value-zone="America/Mexico_City"
+              placeholder="DD/MM/YYYY 00:00"
+              :format="{ day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric'}"
+              :phrases="{ok: 'Continuar', cancel: 'Salir'}"
+              :hour-step="1"
+              :minute-step="10"
+              :week-start="7"
+              :min-datetime="new Date().toISOString()"
+              use12-hour
+              auto
+              ></datetime>
+    </div>
+      <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="input-group-3" label="¿Esta será una visita recurrente semanal?" v-slot="{ ariaDescribedby }">
@@ -84,7 +86,7 @@
         </b-form-checkbox-group>
       </b-form-group>
 
-            <b-button type="submit" @submit="onSubmit" variant="primary">Guardar</b-button>
+            <b-button type="submit" :disabled="habilitaBoton" @submit="onSubmit" variant="primary">Guardar</b-button>
 
           </b-form>
       </b-tab>
@@ -104,9 +106,13 @@ import moment from "moment";
 import { Datetime } from 'vue-datetime'
 import 'vue-datetime/dist/vue-datetime.css'
 import axios from 'axios'
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
 
 
   export default {
+    mixins: [validationMixin],
+
   components: { 
    Datetime,
     
@@ -128,7 +134,28 @@ import axios from 'axios'
 
       }
     },
+  validations: {
+    form: {
+      fecha_inicio: { required },
+      nombre_visita: { required }
+    }
+  },
+  computed: {
+      habilitaBoton: function() {
+        var dato = true
+          && this.form.nombre_visita
+          && this.form.fecha_inicio
+          && this.form.fecha_fin
+          && this.form.visita_semanal_recurrente_activa
+          && this.form.visita_mensual_recurrente_activa
+          return !dato;
+      }
+  },
     methods: {
+      validateState(nombre_visita) {
+       const { $dirty, $error } = this.$v.form[nombre_visita];
+       return $dirty ? !$error : null;
+      },
       onSubmit(event) {
         event.preventDefault()
         this.form.fecha_inicio = moment(new Date(this.form.fecha_inicio)).format('DD/MM/YYYY hh:mm:ss');
