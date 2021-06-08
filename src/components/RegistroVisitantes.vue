@@ -431,7 +431,7 @@
       onSubmit(event) {
         event.preventDefault()
         alert(JSON.stringify(this.form))
-        axios.post('http://127.0.0.1:5000/detalle_visita', this.form).then(response => {
+        axios.post('http://127.0.0.1:5000/visitantes', this.form).then(response => {
           this.$v.form.$touch();
           this.user_id=response.data.user_id;
           console.log(response.data);

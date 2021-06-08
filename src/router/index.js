@@ -26,11 +26,11 @@ export default new Router({
       component: RegistroVisitantes,
       props: (route) => ({ id_detalle_visita: route.query.is_detalle_visita })
     },
-    {
-      path: '/control',
-      name: 'Control',
-      component: Control
-    },
+   // {
+     // path: '/control',
+     // name: 'Control',
+     // component: Control
+    //},
   ],
   mode: 'history'
 })
