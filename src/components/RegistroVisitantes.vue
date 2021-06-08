@@ -250,7 +250,7 @@
         mensaje: '',
 
         form: {
-          user_id: '',
+          user_id: this.$route.params.user_id,
           nombre: '',
           apellido_paterno: '',
           apellido_materno: '',
