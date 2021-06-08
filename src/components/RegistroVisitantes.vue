@@ -250,7 +250,8 @@
         mensaje: '',
 
         form: {
-          user_id: this.$route.params.user_id,
+          id_detalle_visita: this.$route.params.id_detalle_visita,
+          user_id: 'Prueba',
           nombre: '',
           apellido_paterno: '',
           apellido_materno: '',
@@ -263,7 +264,6 @@
         },
         
         form2:{
-          id_detalle_visita: '1',
           rostro_b64: '',
           identificacion_b64: ''
         }
@@ -317,13 +317,13 @@
         event.preventDefault()
         axios.post('http://127.0.0.1:5000/analiza-imagenes',this.form2).then(response => {
           console.log(response.data);
-          this.id_detalle_visita=response;
+          this.user_id=response;
           this.mensaje=response.data.mensaje;
           this.match=response.data.match;
           this.mostrarCamaras=!this.match;
-        this.toggleCamera()
-        this.toggleCamera2()
-        this.stopCameraStream()
+          this.toggleCamera()
+          this.toggleCamera2()
+          this.stopCameraStream()
           // alert(response.data.mensaje);
         }).catch(error => {
           this.msgErr = error;

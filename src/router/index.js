@@ -21,10 +21,10 @@ export default new Router({
       component: RegistroVisita
     },
     {
-      path: '/visitantes/:user_id?',
+      path: '/visitantes/:id_detalle_visita?',
       name: 'RegistroVisitantes',
       component: RegistroVisitantes,
-      props: (route) => ({ user_id: route.query.user_id })
+      props: (route) => ({ id_detalle_visita: route.query.is_detalle_visita })
     },
     {
       path: '/control',
