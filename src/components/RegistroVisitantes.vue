@@ -218,6 +218,25 @@
           </div>
         </modal><!-- ends modal-->
 
+        <modal 
+          name="modal-fallo" 
+          :clickToClose="false" 
+          :reset="true"
+          :width="480"
+          :height="245">
+          <div class="card">
+              <div class="card-header">Información</div>
+              <div class="card-body">
+                  <div class="form-group">
+                      <h6>Tu informacion NO se guardo correctamente, intenta nuevamnete</h6>
+                  </div>
+                  <div class="form-group my-4" style="text-align: right;">
+                      <b-button variant="info" @click="closeModalFallo" @submit="resetForm">Aceptar</b-button>
+                  </div>
+              </div>
+          </div>
+        </modal><!-- ends modal-->
+
 </div>
 
 </template>
@@ -225,14 +244,11 @@
 
 
 <script>
-
   import axios from 'axios';
   import "vue-range-slider/dist/vue-range-slider.css";
   import { validationMixin } from "vuelidate";
   import { required, alpha, minLength, maxLength , integer, email} from "vuelidate/lib/validators";
-
   const emaiRegex = new RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-
   export default {
     mixins: [validationMixin],
     components: {
@@ -251,6 +267,7 @@
         uuid_visitante: '',
         ruta_imagen_rostro: '',
         ruta_imagen_identificacion: '',
+        insert: true,
 
         form: {
           id_detalle_visita: this.$route.params.id_detalle_visita,
@@ -345,6 +362,9 @@
       },
       closeModalExito(){
         this.$modal.hide('modal-exito');
+      },
+      closeModalFallo(){
+        this.$modal.hide('modal-fallo');
       },
       toggleCamera(){
         if(this.isCameraOpen){
@@ -446,10 +466,12 @@
            alert("enviado");
         }).catch(error => {
           this.msgErr = error;
-          if(error.response) {
-              this.msgErr = error.response.data['exceptionLongDescription'];
+          if(this.insert) {
+             this.$modal.show('modal-exito');
           }
-          this.$modal.show('modal-exito');
+          else{
+            this.$modal.show('modal-fallo');
+          }
         }).finally(
           () => this.loading = false
         );
@@ -476,4 +498,3 @@
       
   }
 </script>
-
