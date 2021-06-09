@@ -144,8 +144,8 @@
       <b-form-group id="input-group-7" label="Telefono de emergencia:" label-for="input-7">
         <b-form-input
           id="input-7"
-          v-model="$v.form.telefono_emergencia.$model"
-          :state="validateState('telefono_emergencia')"
+          v-model="$v.form.numero_emergencia.$model"
+          :state="validateState('numero_emergencia')"
           placeholder="Ingresa tu telefono para emergencias"
         ></b-form-input>
         <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe contener 10 digitos.</b-form-invalid-feedback>
@@ -248,17 +248,19 @@
         match: '',
         mostrarCamaras: true,
         mensaje: '',
-        user_id: '',
+        uuid_visitante: '',
+        ruta_imagen_rostro: '',
+        ruta_imagen_identificacion: '',
 
         form: {
           id_detalle_visita: this.$route.params.id_detalle_visita,
-          user_id: '',
+          uuid_visitante: '',
           nombre: '',
           apellido_paterno: '',
           apellido_materno: '',
           telefono_particular: null,
           telefono_celular: null,
-          telefono_emergencia: null,
+          numero_emergencia: null,
           nombre_contacto_emergencia: '',
           email: '',
           genero: null
@@ -278,7 +280,7 @@
       genero: { required },
       telefono_celular: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
       telefono_particular: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
-      telefono_emergencia: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
+      numero_emergencia: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
       nombre_contacto_emergencia: { required, minLength: minLength(3) },
       email: { required, email },
       
@@ -298,7 +300,7 @@
           && this.form.apellido_materno && this.form.apellido_materno.length>3
           && this.form.telefono_celular && this.form.telefono_celular.length==10
           && this.form.telefono_particular && this.form.telefono_particular.length==10
-          && this.form.telefono_emergencia && this.form.telefono_emergencia.length==10
+          && this.form.numero_emergencia && this.form.numero_emergencia.length==10
           && this.form.nombre_contacto_emergencia && this.form.nombre_contacto_emergencia.length>3
           && this.form.email && emaiRegex.test(this.form.email)
           return !dato;
@@ -316,9 +318,11 @@
       },
       postRespuesta(event) {
         event.preventDefault()
-        axios.post('http://127.0.0.1:5000/analiza-imagenes',this.form2).then(response => {
+        axios.post('http://127.0.0.1:5000/validacion-rostro-identificacion',this.form2).then(response => {
           console.log(response.data);
-          this.user_id = response.data.user_id;
+          this.uuid_visitante = response.data.uuid_visitante;
+          this.ruta_imagen_rostro = response.data.ruta_imagen_rostro;
+          this.ruta_imagen_identificacion = response.data.ruta_imagen_identificacion;
           this.mensaje=response.data.mensaje;
           this.match=response.data.match;
           this.mostrarCamaras=!this.match;
@@ -431,11 +435,13 @@
       },
       onSubmit(event) {
         event.preventDefault()
-        this.form.user_id=this.user_id;
+        this.form.uuid_visitante=this.uuid_visitante;
+        this.form.ruta_imagen_rostro=this.ruta_imagen_rostro;
+        this.form.ruta_imagen_identificacion=this.ruta_imagen_identificacion;
         console.log(this.form);
-        axios.post('http://127.0.0.1:5000/visitantes', this.form, ).then(response => {
-          this.user_id = response.data.user_id;
-          console.log(response.data.user_id);
+        axios.post('http://127.0.0.1:5000/visitantes/visita', this.form, ).then(response => {
+          this.uuid_visitante = response.data.uuid_visitante;
+          console.log(response.data.uuid_visitante);
           this.$v.form.$touch();
            alert("enviado");
         }).catch(error => {
@@ -456,7 +462,7 @@
         genero: null,
         telefono_celular: null,
         telefono_particular: null,
-        telefono_emergencia: null,
+        numero_emergencia: null,
         nombre_contacto_emergencia: '',
         email: ''
         }
