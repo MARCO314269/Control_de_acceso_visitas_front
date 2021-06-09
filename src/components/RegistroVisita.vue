@@ -70,8 +70,8 @@
           id="checkboxes-3"
           :aria-describedby="ariaDescribedby"
         >
-          <b-form-checkbox value="true">Si</b-form-checkbox>
-          <b-form-checkbox value="false">No</b-form-checkbox>
+          <b-form-checkbox value=1>Si</b-form-checkbox>
+          <b-form-checkbox value=0>No</b-form-checkbox>
         </b-form-checkbox-group>
       </b-form-group>
 
@@ -81,8 +81,8 @@
           id="checkboxes-4"
           :aria-describedby="ariaDescribedby"
         >
-          <b-form-checkbox value="true">Si</b-form-checkbox>
-          <b-form-checkbox value="false">No</b-form-checkbox>
+          <b-form-checkbox value=1>Si</b-form-checkbox>
+          <b-form-checkbox value=0>No</b-form-checkbox>
         </b-form-checkbox-group>
       </b-form-group>
 
@@ -92,6 +92,26 @@
       </b-tab>
     </b-tabs>
   </b-card>
+
+      <modal 
+          name="modal-exito" 
+          :clickToClose="false" 
+          :reset="true"
+          :width="480"
+          :height="245">
+          <div class="card">
+              <div class="card-header">Información</div>
+              <div class="card-body">
+                  <div class="form-group">
+                      <h6>Favor de compartir esta url con tus visitantes:</h6>
+                      <p>{{this.url_visitante}}</p>
+                  </div>
+                  <div class="form-group my-4" style="text-align: right;">
+                      <b-button variant="info" @click="closeModalExito">Aceptar</b-button>
+                  </div>
+              </div>
+          </div>
+        </modal><!-- ends modal-->
           
 
 
@@ -115,7 +135,7 @@ import { required } from "vuelidate/lib/validators";
 
   components: { 
    Datetime,
-    
+    //localhost:80807vistantes/1
 
     },
     data() {
@@ -125,12 +145,14 @@ import { required } from "vuelidate/lib/validators";
           fecha_inicio: null,
           fecha_fin: null,
           nombre_visita: '',
-          visita_semanal_recurrente_activa: "false",
-          visita_mensual_recurrente_activa: "false",
-          visita_permitida_activa: "true"
+          visita_semanal_recurrente_activa: 0,
+          visita_mensual_recurrente_activa: 0,
+          visita_permitida_activa: 1
         },
         inicio: null,
-        fin: null,        
+        fin: null,
+        url_visitante: 'localhost:8080/visitantes/',
+        id_detalle_visita: '',        
 
       }
     },
@@ -156,20 +178,23 @@ import { required } from "vuelidate/lib/validators";
        const { $dirty, $error } = this.$v.form[nombre_visita];
        return $dirty ? !$error : null;
       },
+      closeModalExito(){
+        this.$modal.hide('modal-exito');
+      },
       onSubmit(event) {
         event.preventDefault()
-        this.form.fecha_inicio = moment(new Date(this.form.fecha_inicio)).format('DD/MM/YYYY hh:mm:ss');
-        this.form.fecha_fin = moment(new Date(this.form.fecha_fin)).format('DD/MM/YYYY hh:mm:ss');
-        alert(JSON.stringify(this.form))
-        axios.post('http://127.0.0.1:5000/detalle_visita', JSON.stringify(this.form)).then(response => {
+        this.form.fecha_inicio = moment(new Date(this.form.fecha_inicio)).format('YYYY-MM-DD hh:mm:ss');
+        this.form.fecha_fin = moment(new Date(this.form.fecha_fin)).format('YYYY-MM-DD hh:mm:ss');
+        axios.post('http://127.0.0.1:5000/api/detalle-visita', this.form).then(response => {
+          this.id_detalle_visita = response.data.id_detalle_visita;
+          this.url_visitante = this.url_visitante+this.id_detalle_visita;
           console.log(response.data);
-           alert("enviado");
+          this.$modal.show('modal-exito');
         }).catch(error => {
           this.msgErr = error;
           if(error.response) {
               this.msgErr = error.response.data['exceptionLongDescription'];
           }
-          this.$modal.show('mensaje-exito');
         }).finally(
           () => this.loading = false
         );

@@ -248,10 +248,11 @@
         match: '',
         mostrarCamaras: true,
         mensaje: '',
+        user_id: '',
 
         form: {
           id_detalle_visita: this.$route.params.id_detalle_visita,
-          user_id: 'Prueba',
+          user_id: '',
           nombre: '',
           apellido_paterno: '',
           apellido_materno: '',
@@ -317,13 +318,14 @@
         event.preventDefault()
         axios.post('http://127.0.0.1:5000/analiza-imagenes',this.form2).then(response => {
           console.log(response.data);
-          this.user_id=response;
+          this.user_id = response.data.user_id;
           this.mensaje=response.data.mensaje;
           this.match=response.data.match;
           this.mostrarCamaras=!this.match;
           this.toggleCamera()
           this.toggleCamera2()
           this.stopCameraStream()
+          this.$modal.show('modal-camaras');
           // alert(response.data.mensaje);
         }).catch(error => {
           this.msgErr = error;
@@ -333,7 +335,6 @@
         }).finally(
           () => this.loading = false
         );
-        this.$modal.show('modal-camaras');
       },
       closeModalCamaras(){
         this.$modal.hide('modal-camaras');
@@ -430,11 +431,12 @@
       },
       onSubmit(event) {
         event.preventDefault()
-        alert(JSON.stringify(this.form))
-        axios.post('http://127.0.0.1:5000/visitantes', this.form).then(response => {
+        this.form.user_id=this.user_id;
+        console.log(this.form);
+        axios.post('http://127.0.0.1:5000/visitantes', this.form, ).then(response => {
+          this.user_id = response.data.user_id;
+          console.log(response.data.user_id);
           this.$v.form.$touch();
-          this.user_id=response.data.user_id;
-          console.log(response.data);
            alert("enviado");
         }).catch(error => {
           this.msgErr = error;
