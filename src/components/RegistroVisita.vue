@@ -22,45 +22,32 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio de tu evento:" :state="validateState('fecha_inicio')" label-for="input-2">
+      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio y fin de tu evento:"  label-for="input-2">
           <div>
-            <datetime
-                  type="datetime"
-                  v-model="$v.form.fecha_inicio.$model"
-                  input-class="my-class"
-                  value-zone="America/Mexico_City"
-                  placeholder="DD/MM/YYYY   00:00"
-                  :format="{ day: 'numeric', month: 'numeric', year: 'numeric',  hour: 'numeric', minute: 'numeric'}"
-                  :phrases="{ok: 'Continuar', cancel: 'Salir'}"
-                  :hour-step="1"
-                  :minute-step="10"
-                  :week-start="7"
-                  :min-datetime="new Date().toISOString()"
-                  use12-hour
-                  auto
-              ></datetime>
-    </div>
+            <a-date-picker
+              v-model="form.fecha_inicio"
+              :disabled-date="disabledStartDate"
+              show-time
+              format="YYYY-MM-DD HH:mm:ss"
+              placeholder="Inicio"
+              @openChange="handleStartOpenChange"
+            />
+          </div>
       <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
 
-      <b-form-group id="input-group-5" label="Selecciona la fecha y hora fin de tu evento:" label-for="input-5">
+      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio y fin de tu evento:"  label-for="input-2">
           <div>
-              <datetime
-              type="datetime"
+            <a-date-picker
               v-model="form.fecha_fin"
-              input-class="my-class"
-              value-zone="America/Mexico_City"
-              placeholder="DD/MM/YYYY 00:00"
-              :format="{ day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric'}"
-              :phrases="{ok: 'Continuar', cancel: 'Salir'}"
-              :hour-step="1"
-              :minute-step="10"
-              :week-start="7"
-              :min-datetime="new Date().toISOString()"
-              use12-hour
-              auto
-              ></datetime>
-    </div>
+              :disabled-date="disabledEndDate"
+              show-time
+              format="YYYY-MM-DD HH:mm:ss"
+              placeholder="Fin"
+              :open="endOpen"
+              @openChange="handleEndOpenChange"
+            />
+          </div>
       <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
 
@@ -85,6 +72,9 @@
           <b-form-checkbox value=0>No</b-form-checkbox>
         </b-form-checkbox-group>
       </b-form-group>
+
+
+      
 
             <b-button type="submit" :disabled="habilitaBoton" @submit="onSubmit" variant="primary">Guardar</b-button>
 
@@ -122,19 +112,19 @@
 
 <script>
 //import Datepicker from 'vuejs-datepicker';
+import 'moment/locale/es';
 import moment from "moment";
-import { Datetime } from 'vue-datetime'
 import 'vue-datetime/dist/vue-datetime.css'
 import axios from 'axios'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 
   export default {
     mixins: [validationMixin],
 
   components: { 
-   Datetime,
     //localhost:80807vistantes/1
 
     },
@@ -147,18 +137,17 @@ import { required } from "vuelidate/lib/validators";
           nombre_visita: '',
           visita_semanal_recurrente_activa: 0,
           visita_mensual_recurrente_activa: 0,
-          visita_permitida_activa: 1
+          visita_permitida_activa: 1,
         },
-        inicio: null,
-        fin: null,
         url_visitante: 'localhost:8080/visitantes/',
-        id_detalle_visita: '',        
-
+        id_detalle_visita: '',
+        endOpen: false,
+        fecha_inicio: null,
+        fecha_fin: null,       
       }
     },
   validations: {
     form: {
-      fecha_inicio: { required },
       nombre_visita: { required }
     }
   },
@@ -168,10 +157,16 @@ import { required } from "vuelidate/lib/validators";
           && this.form.nombre_visita
           && this.form.fecha_inicio
           && this.form.fecha_fin
-          && this.form.visita_semanal_recurrente_activa
-          && this.form.visita_mensual_recurrente_activa
           return !dato;
       }
+  },
+  watch: {
+    fecha_inicio(val) {
+      console.log('fecha_inicio', val);
+    },
+    fecha_fin(val) {
+      console.log('fecha_fin', val);
+    },   
   },
     methods: {
       validateState(nombre_visita) {
@@ -183,6 +178,7 @@ import { required } from "vuelidate/lib/validators";
       },
       onSubmit(event) {
         event.preventDefault()
+        alert(JSON.stringify(this.form))
         this.form.fecha_inicio = moment(new Date(this.form.fecha_inicio)).format('YYYY-MM-DD hh:mm:ss');
         this.form.fecha_fin = moment(new Date(this.form.fecha_fin)).format('YYYY-MM-DD hh:mm:ss');
         axios.post('http://127.0.0.1:5000/api/detalle-visita', this.form).then(response => {
@@ -198,9 +194,30 @@ import { required } from "vuelidate/lib/validators";
         }).finally(
           () => this.loading = false
         );
+      },
+      disabledStartDate(fecha_inicio) {
+          const fecha_fin = this.form.fecha_fin;
+          if (!fecha_inicio || !fecha_fin) {
+            return false;
+          }
+          return fecha_inicio.valueOf() > fecha_fin.valueOf();
+      },
+      disabledEndDate(fecha_fin) {
+        const fecha_inicio = this.form.fecha_inicio;
+        if (!fecha_fin || !fecha_fin) {
+          return false;
+        }
+        return fecha_inicio.valueOf() >= fecha_fin.valueOf();
+      },
+      handleStartOpenChange(open) {
+        if (!open) {
+           this.endOpen = true;
+        }
+      },
+      handleEndOpenChange(open) {
+        this.endOpen = open;
       }
-    }
-
+  },    
  }
 
 
