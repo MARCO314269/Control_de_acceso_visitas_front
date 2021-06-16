@@ -32,7 +32,7 @@
               placeholder="Inicio"
               @openChange="handleStartOpenChange"
             />
-          </div>
+          </div> 
       <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
 
@@ -112,17 +112,22 @@
 
 <script>
 //import Datepicker from 'vuejs-datepicker';
-import 'moment/locale/es';
-import moment from "moment";
+import 'moment/locale/es.js';
+import moment from 'moment';
 import 'vue-datetime/dist/vue-datetime.css'
 import axios from 'axios'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
+import DatePicker from 'antd';
 
+
+  moment.locale('es');
 
   export default {
     mixins: [validationMixin],
+    DatePicker,
 
   components: { 
     //localhost:80807vistantes/1
@@ -143,31 +148,32 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
         id_detalle_visita: '',
         endOpen: false,
         fecha_inicio: null,
-        fecha_fin: null,       
+        fecha_fin: null,   
+        es_ES,    
       }
     },
-  validations: {
-    form: {
-      nombre_visita: { required }
-    }
-  },
-  computed: {
-      habilitaBoton: function() {
-        var dato = true
-          && this.form.nombre_visita
-          && this.form.fecha_inicio
-          && this.form.fecha_fin
-          return !dato;
+    validations: {
+      form: {
+        nombre_visita: { required }
       }
-  },
-  watch: {
-    fecha_inicio(val) {
-      console.log('fecha_inicio', val);
     },
-    fecha_fin(val) {
-      console.log('fecha_fin', val);
-    },   
-  },
+    computed: {
+        habilitaBoton: function() {
+          var dato = true
+            && this.form.nombre_visita
+            && this.form.fecha_inicio
+            && this.form.fecha_fin
+            return !dato;
+        }
+    },
+    watch: {
+      fecha_inicio(val) {
+        console.log('fecha_inicio', val);
+      },
+      fecha_fin(val) {
+        console.log('fecha_fin', val);
+      },   
+    },
     methods: {
       validateState(nombre_visita) {
        const { $dirty, $error } = this.$v.form[nombre_visita];
