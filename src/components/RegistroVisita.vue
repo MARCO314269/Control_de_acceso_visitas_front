@@ -73,9 +73,6 @@
         </b-form-checkbox-group>
       </b-form-group>
 
-
-      
-
             <b-button type="submit" :disabled="habilitaBoton" @submit="onSubmit" variant="primary">Guardar</b-button>
 
           </b-form>
@@ -83,25 +80,28 @@
     </b-tabs>
   </b-card>
 
-      <modal 
+      <b-modal scrollable
+          ref="my-modal"
           name="modal-exito" 
           :clickToClose="false" 
           :reset="true"
-          :width="480"
-          :height="245">
+          :width= auto
+          :height= auto
+          >
           <div class="card">
               <div class="card-header">Información</div>
               <div class="card-body">
                   <div class="form-group">
                       <h6>Favor de compartir esta url con tus visitantes:</h6>
-                      <p>{{this.url_visitante}}</p>
+                      <p>{{this.url_visitante_id}}</p>
+                      <img :src="'data:image/jpeg;base64,'+img_data">
                   </div>
                   <div class="form-group my-4" style="text-align: right;">
                       <b-button variant="info" @click="closeModalExito">Aceptar</b-button>
                   </div>
               </div>
           </div>
-        </modal><!-- ends modal-->
+        </b-modal><!-- ends modal-->
           
 
 
@@ -120,14 +120,10 @@ import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
-import DatePicker from 'antd';
 
-
-  moment.locale('es');
 
   export default {
     mixins: [validationMixin],
-    DatePicker,
 
   components: { 
     //localhost:80807vistantes/1
@@ -142,31 +138,33 @@ import DatePicker from 'antd';
           nombre_visita: '',
           visita_semanal_recurrente_activa: 0,
           visita_mensual_recurrente_activa: 0,
-          visita_permitida_activa: 1,
+          visita_permitida_activa: 1
         },
+        inicio: null,
+        fin: null,
         url_visitante: 'localhost:8080/visitantes/',
-        id_detalle_visita: '',
+        es_ES,
         endOpen: false,
-        fecha_inicio: null,
-        fecha_fin: null,   
-        es_ES,    
+        url_visitante_id: "",
+        id_detalle_visita: '',
+        img_data: [],
       }
     },
-    validations: {
-      form: {
-        nombre_visita: { required }
+  validations: {
+    form: {
+      nombre_visita: { required }
+    }
+  },
+  computed: {
+      habilitaBoton: function() {
+        var dato = true
+          && this.form.nombre_visita
+          && this.form.fecha_inicio
+          && this.form.fecha_fin
+          return !dato;
       }
-    },
-    computed: {
-        habilitaBoton: function() {
-          var dato = true
-            && this.form.nombre_visita
-            && this.form.fecha_inicio
-            && this.form.fecha_fin
-            return !dato;
-        }
-    },
-    watch: {
+  },
+  watch: {
       fecha_inicio(val) {
         console.log('fecha_inicio', val);
       },
@@ -180,18 +178,22 @@ import DatePicker from 'antd';
        return $dirty ? !$error : null;
       },
       closeModalExito(){
-        this.$modal.hide('modal-exito');
+        //this.$modal.hide('modal-exito');
+        //this.$bvModal.hide('modal-exito');
+        
+        this.$refs['my-modal'].hide();
       },
       onSubmit(event) {
         event.preventDefault()
-        alert(JSON.stringify(this.form))
         this.form.fecha_inicio = moment(new Date(this.form.fecha_inicio)).format('YYYY-MM-DD hh:mm:ss');
         this.form.fecha_fin = moment(new Date(this.form.fecha_fin)).format('YYYY-MM-DD hh:mm:ss');
-        axios.post('http://127.0.0.1:5000/api/detalle-visita', this.form).then(response => {
+        axios.post('http://127.0.0.1:5000/detalle-visita', this.form).then(response => {
           this.id_detalle_visita = response.data.id_detalle_visita;
-          this.url_visitante = this.url_visitante+this.id_detalle_visita;
-          console.log(response.data);
-          this.$modal.show('modal-exito');
+          this.url_visitante_id = this.url_visitante+this.id_detalle_visita;
+          this.getQR (this.url_visitante_id)
+          this.$refs['my-modal'].show();
+          //this.$bvModal.show('modal-exito');
+          //this.$modal.show('modal-exito');
         }).catch(error => {
           this.msgErr = error;
           if(error.response) {
@@ -201,7 +203,18 @@ import DatePicker from 'antd';
           () => this.loading = false
         );
       },
-      disabledStartDate(fecha_inicio) {
+      getQR (mensaje) {
+      const path = 'http://localhost:5000/imagen_QR'
+      const data = { "datos_para_qr": mensaje }
+      axios.post(path,data).then(response => {
+        this.img_data = response.data.encoded_qr_data
+        console.log(this.img_data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    },
+    disabledStartDate(fecha_inicio) {
           const fecha_fin = this.form.fecha_fin;
           if (!fecha_inicio || !fecha_fin) {
             return false;
@@ -223,8 +236,10 @@ import DatePicker from 'antd';
       handleEndOpenChange(open) {
         this.endOpen = open;
       }
-  },    
- }
+  }
+}
+
+
 
 
 </script>

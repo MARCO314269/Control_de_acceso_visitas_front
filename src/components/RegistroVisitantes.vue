@@ -459,11 +459,10 @@
         this.form.ruta_imagen_rostro=this.ruta_imagen_rostro;
         this.form.ruta_imagen_identificacion=this.ruta_imagen_identificacion;
         console.log(this.form);
-        axios.post('http://127.0.0.1:5000/visitantes/visita', this.form, ).then(response => {
+        axios.post('http://127.0.0.1:5000/visitantes/visita', this.form).then(response => {
           this.uuid_visitante = response.data.uuid_visitante;
-          console.log(response.data.uuid_visitante);
+          console.log(response.data);
           this.$v.form.$touch();
-           alert("enviado");
         }).catch(error => {
           this.msgErr = error;
           if(this.insert) {
