@@ -26,7 +26,7 @@
           <div>
             <a-date-picker
               v-model="form.fecha_inicio"
-              :disabled-date="disabledStartDate"
+              :disabled-date="disabledDate"
               show-time
               format="YYYY-MM-DD HH:mm:ss"
               placeholder="Inicio"
@@ -213,6 +213,10 @@ import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
       .catch((error) => {
         console.log(error)
       })
+    },
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current <=  moment().add(-1, 'days');
     },
     disabledStartDate(fecha_inicio) {
           const fecha_fin = this.form.fecha_fin;
