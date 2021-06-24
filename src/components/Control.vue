@@ -35,21 +35,14 @@
             <td>{{ resultado_final.nombre }}</td>
             <td>{{ resultado_final.fecha_ingreso_visitante }}</td>
             <td>{{ resultado_final.fecha_fin }}</td>
-            <td>{{ this.countdown }}</td>
+            <td>{{}}</td>
             <td width="200">
               <button
                 type="button"
                 @click="openRev()"
                 class="btn btn-success mb-2 mr-4"
               >
-                <i aria-hidden="true"></i>Revisar
-              </button>
-              <button
-                type="button"
-                @click="openDelete()"
-                class="btn btn-danger mb-2 mr-4"
-              >
-                <i aria-hidden="true"></i>
+                <i aria-hidden="true"></i>Ver detalles
               </button>
             </td>
             <td></td>
@@ -62,32 +55,33 @@
     <!-- Modal info visitante-->
 
     <modal
-      name="editarPais"
+      name="ver-detalle"
       :clickToClose="false"
       :reset="true"
-      :width="480"
-      :height="245"
+      :width="880"
+      :height="645"
     >
       <div class="card">
         <div class="card-header">Informacion adiconal</div>
         <div class="card-body">
           <div class="table-wrapper-scroll-y my-custom-scrollbar">
             <b-list-group>
-              <b-list-group-item>
-                EVENTO: {{ visitas.nombre_visita }}</b-list-group-item
-              >
-              <b-list-group-item>
-                CONDOMINIO: {{ visitas.id_condominio }}</b-list-group-item
-              >
+              <b-list-group-item> EVENTO: {{ resultado_final.nombre_visita }}</b-list-group-item>
+              <b-list-group-item> CONDOMINIO: {{ resultado_final.id_condominio }}</b-list-group-item>
+              <b-list-group-item> NOMBRE: {{ resultado_final.nombre }}</b-list-group-item>
+              <b-list-group-item> APELLIDO PATERNO: {{ resultado_final.apellido_paterno }}</b-list-group-item>
+              <b-list-group-item> APELLIDO MATERNO: {{ resultado_final.apellido_materno }}</b-list-group-item>
+              <b-list-group-item> TELEFONO PARTICULAR: {{ resultado_final.telefono_particular }}</b-list-group-item>
+              <b-list-group-item> TELEFONO CELULAR: {{ resultado_final.telefono_celular }}</b-list-group-item>
+              <b-list-group-item> EMAIL: {{ resultado_final.email }}</b-list-group-item>
+              <b-list-group-item> NOMBRE DE CONTACTO DE EMERGENCIA: {{ resultado_final.nombre_contacto_emergencia }}</b-list-group-item>
+              <b-list-group-item> TELEFONO DE CONTACTO DE EMERGENCIA: {{ resultado_final.numero_emergencia }}</b-list-group-item>
             </b-list-group>
           </div>
 
           <div class="form-group my-4" style="text-align: right">
-            <b-button variant="primary" class="btn btn-success mr-2"
-              >Confirmar acceso</b-button
-            >
             <b-button variant="danger" class="mr-2" @click="closeModalEdit"
-              >Cancelar</b-button
+              >Cerrar</b-button
             >
           </div>
         </div>
@@ -229,10 +223,10 @@ export default {
       }
     },
     openRev() {
-      this.$modal.show("editarPais");
+      this.$modal.show("ver-detalle");
     },
     closeModalEdit: function () {
-      this.$modal.hide("editarPais");
+      this.$modal.hide("ver-detalle");
     },
     openGen() {
       this.$modal.hide("mensaje-exito");
