@@ -27,8 +27,8 @@
             <a-date-picker
               v-model="form.fecha_inicio"
               :disabled-date="disabledDate"
-              show-time
-              format="YYYY-MM-DD HH:mm:ss"
+              :show-time="{ format: 'HH:mm' }"
+              format="YYYY-MM-DD HH:mm"
               placeholder="Inicio"
               @openChange="handleStartOpenChange"
             />
@@ -41,8 +41,8 @@
             <a-date-picker
               v-model="form.fecha_fin"
               :disabled-date="disabledEndDate"
-              show-time
-              format="YYYY-MM-DD HH:mm:ss"
+              :show-time="{ format: 'HH:mm' }"
+              format="YYYY-MM-DD HH:mm"
               placeholder="Fin"
               :open="endOpen"
               @openChange="handleEndOpenChange"
@@ -227,9 +227,6 @@ import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
       },
       disabledEndDate(fecha_fin) {
         const fecha_inicio = this.form.fecha_inicio;
-        if (!fecha_fin || !fecha_fin) {
-          return false;
-        }
         return fecha_inicio.valueOf() >= fecha_fin.valueOf();
       },
       handleStartOpenChange(open) {
