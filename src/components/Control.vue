@@ -35,7 +35,7 @@
             <td>{{ resultado_final.nombre }}</td>
             <td>{{ resultado_final.fecha_ingreso_visitante }}</td>
             <td>{{ resultado_final.fecha_fin }}</td>
-            <td>{{}}</td>
+            <td>{{ }}</td>
             <td width="200">
               <button
                 type="button"
