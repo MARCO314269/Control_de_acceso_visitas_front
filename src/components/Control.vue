@@ -9,7 +9,6 @@
         ref="id_visita"
         required
         class="form-control mr-3"
-        :class="className"
         placeholder="123"
         v-model="id_visita"
       />
@@ -20,31 +19,37 @@
     </div>
     <br /><br />
     <div class="row">
-      <table class="table table-hover table-sm table-striped" v-if="permiso_ingreso == true">
+      <table class="table table-hover table-sm table-striped">
         <thead>
           <tr>
             <th scope="col">Nombre</th>
             <th scope="col">Fecha Ingreso</th>
             <th scope="col">Fecha Fin</th>
             <th scope="col">Tiempo restante</th>
-            <th scope="col">Accion</th>
+            <th scope="col">Alertas</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>{{ resultado_final.nombre }}</td>
-            <td>{{ resultado_final.fecha_ingreso_visitante }}</td>
-            <td>{{ resultado_final.fecha_fin }}</td>
-            <td>{{ }}</td>
-            <td width="200">
-              <button
-                type="button"
-                @click="openRev()"
-                class="btn btn-success mb-2 mr-4"
-              >
-                <i aria-hidden="true"></i>Ver detalles
-              </button>
-            </td>
+        <tbody v-for = "oa in objetoActual" :key ="oa.id_visita">
+          <tr @click="openRev(oa.id_visita)" v-if="oa.permiso_ingreso == true && oa.fecha_ingreso_visitante != ''">
+            <td>{{ oa.nombre }}</td>
+            <td>{{ oa.fecha_ingreso_visitante }}</td>
+            <td>{{ oa.fecha_fin }}</td>
+            <td>
+                <vue-countdown-timer
+                  :start-time="start_at?start_at:startAt"
+                  :end-time="oa.fecha_fin"
+                  :interval="1000"
+                  :start-label="'Until start:'"
+                  :end-label="'Until end:'"
+                  label-position="begin"
+                  :end-text="'Event ended!'"
+                  :day-txt="'days'"
+                  :hour-txt="'hours'"
+                  :minutes-txt="'minutes'"
+                  :seconds-txt="'seconds'">
+                </vue-countdown-timer>
+         </td>
+            <td class="center"><h4><span v-if="oa.alerta_tiempo_visita_activa == 1" class="badge badge-success ml-4">Permitido</span><span v-else class="badge badge-danger">No permitido</span></h4></td>
             <td></td>
           </tr>
         </tbody>
@@ -52,43 +57,74 @@
     </div>
     <!--  end row -->
 
-    <!-- Modal info visitante-->
+    <modal 
+        name="info-visitate"
+          class="text-center"
+          :reset="true"
+          :width="580"
+          :height="580">
+          <div class="card">
+                <div class="card-body">
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 style="text-align:center">Infomacion completa</h5>
+                            <table class="table table-bordered table-striped mb-0">
+                              <tbody class="inf_visit">
+                                <tr>
+                                  <td>EVENTO:</td>
+                                  <td>{{ evento }}</td>
+                                </tr>
+                                <tr>
+                                  <td>CONDOMINIO</td>
+                                  <td>{{ condominio }}</td>
+                                </tr>
+                                <tr>
+                                  <td>NOMBRE</td>
+                                  <td>{{ nombre }} </td>
+                                </tr>
+                                <tr>
+                                  <td>APELLIDO PATERNO</td>
+                                  <td>{{ apellido_paterno }}</td>
+                                </tr>
+                                <tr>
+                                  <td>APELLIDO MATERNO</td>
+                                  <td>{{ apellido_materno }}</td>
+                                </tr>
+                                <tr>
+                                  <td>TELEFONO CELULAR</td>
+                                  <td>{{ telefono_celular }}</td>
+                                </tr>
+                                <tr>
+                                  <td>TELEFONO PARTICULAR</td>
+                                  <td>{{ telefono_particular}}</td>
+                                </tr>
+                                <tr>
+                                  <td>EMAIL</td>
+                                  <td>{{ email }}</td>
+                                </tr>
+                                <tr>
+                                  <td>NOMBRE CONTACTO DE EMERGENCIA</td>
+                                  <td>{{ nombre_contacto_emergencia}}</td>
+                                </tr>
+                                <tr>
+                                  <td>NUMERO DE EMERGENCIA</td>
+                                  <td>{{ numero_emergencia }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mr-3" style="text-align: right;">
+                        <b-button variant="danger" @click="RegistrarSalida">Registrar salida</b-button>
+             </div>
+            </div>
+        </modal>
 
-    <modal
-      name="ver-detalle"
-      :clickToClose="false"
-      :reset="true"
-      :width="880"
-      :height="645"
-    >
-      <div class="card">
-        <div class="card-header">Informacion adiconal</div>
-        <div class="card-body">
-          <div class="table-wrapper-scroll-y my-custom-scrollbar">
-            <b-list-group>
-              <b-list-group-item> EVENTO: {{ resultado_final.nombre_visita }}</b-list-group-item>
-              <b-list-group-item> CONDOMINIO: {{ resultado_final.id_condominio }}</b-list-group-item>
-              <b-list-group-item> NOMBRE: {{ resultado_final.nombre }}</b-list-group-item>
-              <b-list-group-item> APELLIDO PATERNO: {{ resultado_final.apellido_paterno }}</b-list-group-item>
-              <b-list-group-item> APELLIDO MATERNO: {{ resultado_final.apellido_materno }}</b-list-group-item>
-              <b-list-group-item> TELEFONO PARTICULAR: {{ resultado_final.telefono_particular }}</b-list-group-item>
-              <b-list-group-item> TELEFONO CELULAR: {{ resultado_final.telefono_celular }}</b-list-group-item>
-              <b-list-group-item> EMAIL: {{ resultado_final.email }}</b-list-group-item>
-              <b-list-group-item> NOMBRE DE CONTACTO DE EMERGENCIA: {{ resultado_final.nombre_contacto_emergencia }}</b-list-group-item>
-              <b-list-group-item> TELEFONO DE CONTACTO DE EMERGENCIA: {{ resultado_final.numero_emergencia }}</b-list-group-item>
-            </b-list-group>
-          </div>
 
-          <div class="form-group my-4" style="text-align: right">
-            <b-button variant="danger" class="mr-2" @click="closeModalEdit"
-              >Cerrar</b-button
-            >
-          </div>
-        </div>
-      </div> </modal
-    ><!-- ends modal-->
-
-    <modal
+     <modal
       name="mensaje-exito"
       :clickToClose="false"
       :reset="true"
@@ -110,11 +146,30 @@
         </div>
       </div> </modal
     ><!-- ends modal-->
+
+     <modal 
+            name="registrarSalida" 
+            :clickToClose="false" 
+            :reset="true"
+            :width="480"
+            :height="200">
+            <div class="card">
+                <div class="card-header">Registrar Salida</div>
+                <div class="card-body">
+                      <p class="card-text">¿Está seguro que desea registar la salida?</p>
+                    <div class="my-4" style="text-align: right;">
+                        <b-button variant="warning" class="mr-4" @click="confirmarSalida">Si</b-button>
+                        <b-button variant="danger" class="mr-4" @click="closeModalSalida">Cerrar</b-button>
+                    </div>
+                </div>
+            </div>
+        </modal><!-- ends modal-->
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import store from "../store";
 import * as moment from "moment";
 export default {
   name: "Main",
@@ -144,7 +199,21 @@ export default {
       fecha_fin: null,
       fecha_inicio: null,
       permiso_ingreso: false,
-      resultado_final: '',
+      resultado_final: [],
+      objetoActual: [],
+      evento: '',
+      condominio: '',
+      nombre: '',
+      apellido_paterno: '',
+      apellido_materno: '',
+      telefono_celular: '',
+      telefono_particular: '',
+      email: '',
+      nombre_contacto_emergencia: '',
+      numero_emergencia: '',
+      fecha_salida_visitante: null,
+      startAt:  moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
+      endAt: null,
     };
   },
   mounted() {
@@ -175,6 +244,7 @@ export default {
           this.msgErr = error.response.data["exceptionLongDescription"];
           this.msnErrorIrreconocible = this.msgErr;
           this.$modal.show("modal-general");
+          store.commit("setSession", {});
         });
     },
     submition2() {
@@ -187,7 +257,7 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.validacion = response.data;
-          this.visitas.resultado_reconocimiento = response.data
+          this.visitas.resultado_reconocimiento = response.data;
           this.submition();
         })
         .catch((error) => {
@@ -196,6 +266,7 @@ export default {
           this.msgErr = error.response.data["exceptionLongDescription"];
           this.msnErrorIrreconocible = this.msgErr;
           this.$modal.show("modal-general");
+          store.commit("setSession", {});
         });
     },
     enviarValidacion() {
@@ -207,32 +278,96 @@ export default {
         axios
           .put(path_visitas_ingreso, this.visitas)
           .then((response) => {
-            console.log("enviado");
+            console.log("enviado******************");
             console.log(response.data);
-            this.resultado_final = response.data
-            this.permiso_ingreso = response.data.permiso_ingreso
-            alert(response.data.mensaje);
+            this.resultado_final = response.data;
+            this.permiso_ingreso = response.data.permiso_ingreso;
+            this.endAt =response.data.fecha_fin;
+            this.endAt = moment(new Date(this.endAt)).format("YYYY-MM-DD hh:mm:ss"),
+
+            console.log("VIENDO FECHA******************");
+            alert(response.data.fecha_fin);
+            console.log(this.endAt);
+
+            alert(this.endAt);
+            this.realTimeInfo(this.resultado_final);
           })
           .catch((error) => {
             console.log(error.response.data);
-            console.log("no encontre informacion")
+            console.log("no encontre informacion");
             this.msgErr = error.response.data["exceptionLongDescription"];
             this.msnErrorIrreconocible = this.msgErr;
             this.$modal.show("modal-general");
+            store.commit("setSession", {});
           });
       }
     },
-    openRev() {
-      this.$modal.show("ver-detalle");
+    realTimeInfo(nuevoObjeto) {
+      this.objetoActual.push(nuevoObjeto);
+      //const returnedTarget = Object.assign(this.resultado_final, obj)
+      console.log("objetoActual******************" + this.objetoActual.length);
+      //console.log(returnedTarget)
+      console.log(JSON.stringify(this.objetoActual));
     },
-    closeModalEdit: function () {
-      this.$modal.hide("ver-detalle");
+    openRev(id_visita) {
+      let tm = {}
+      const path_visitas_ingreso =
+        "http://localhost:5000/api/visitas-ingreso/" + id_visita;
+      axios
+      .get(path_visitas_ingreso)
+      .then((response =>{
+        tm = response.data
+        this.evento=tm.nombre_visita
+        this.condominio=tm.id_condominio
+        this.nombre=tm.nombre
+        this.apellido_paterno=tm.apellido_paterno
+        this.apellido_materno=tm.apellido_materno
+        this.telefono_celular=tm.telefono_celular
+        this.telefono_particular=tm.telefono_particular
+        this.email=tm.email
+        this.nombre_contacto_emergencia= tm.nombre_contacto_emergencia
+        this.numero_emergencia=tm.numero_emergencia
+        console.log("***")
+      }))
+      this.$modal.show("info-visitate");
+    },
+    closeModalRev: function () {
+      this.$modal.hide("info-visitate");
     },
     openGen() {
       this.$modal.hide("mensaje-exito");
     },
     closeModalExito: function () {
       this.$modal.hide("mensaje-exito");
+    },
+    RegistrarSalida(){
+      var fecha_actual = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
+      console.log(fecha_actual)
+      this.$modal.show('registrarSalida');
+    },
+    confirmarSalida(){
+      console.log("confirmandoSalida");
+      const path_visitas_ingreso =
+        "http://localhost:5000/api/visitas-salida/" + this.id_visita;
+      console.log(this.id_visita);
+       if (this.id_visita) {
+        axios
+          .put(path_visitas_ingreso, this.visitas)
+          .then((response) => {
+            console.log("enviado******************");
+            this.fecha_salida_visitante = this.fecha_actual
+            console.log(response.data);
+            this.$modal.hide('registrarSalida');
+            this.$modal.hide('info-visitate');
+          })
+          .catch((error) => {
+            console.log(error.response.data);
+            store.commit("setSession", {});
+          });
+       }
+    },
+    closeModalSalida: function() {
+      this.$modal.hide('registrarSalida');
     },
     convertirFecha: function (fecha) {
       var dia = parseInt(fecha.substring(0, 2));
@@ -281,3 +416,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.inf_visit>tr>td:first-child{
+min-width: 300px;
+}
+</style>

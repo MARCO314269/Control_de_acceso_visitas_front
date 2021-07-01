@@ -18,6 +18,9 @@ import router from './router'
 import store from './store'
 import Vuelidate from "vuelidate"
 import DatePicker from 'ant-design-vue/lib/date-picker';
+import VueSessionStorage from "vue-sessionstorage";
+import VueCountdownTimer from 'vuejs-countdown-timer';
+
 
 
 /*Vue.config.productionTip = false*/
@@ -29,6 +32,9 @@ Vue.use(IconsPlugin)
 Vue.use(VueAxios, axios)
 Vue.use(Vuelidate);
 Vue.use(DatePicker);
+Vue.use(VueSessionStorage);
+Vue.use(VueCountdownTimer);
+Vue.config.productionTip = false;
 
 Vue.component(Button.name, Button)
 
