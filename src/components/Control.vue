@@ -37,7 +37,7 @@
             <td>
                 <vue-countdown-timer
                   :start-time="start_at?start_at:startAt"
-                  :end-time="oa.fecha_fin"
+                  :end-time="end_at?end_at:fecha_fin"
                   :interval="1000"
                   :start-label="'Until start:'"
                   :end-label="'Until end:'"
@@ -213,7 +213,7 @@ export default {
       numero_emergencia: '',
       fecha_salida_visitante: null,
       startAt:  moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
-      endAt: null,
+      fecha_fin_set: null,
     };
   },
   mounted() {
@@ -236,6 +236,9 @@ export default {
           this.visitas.id_visita = response.data.id_visita;
           this.visitas.id_visitante = response.data.id_visitante;
           this.visitas.uuid_visitante = response.data.uuid_visitante;
+          this.fecha_fin = response.data.fecha_fin;
+          console.log("VIENDO FECHA***************************")
+          console.log(this.fecha_fin)
           this.enviarValidacion();
         })
         .catch((error) => {
@@ -282,14 +285,7 @@ export default {
             console.log(response.data);
             this.resultado_final = response.data;
             this.permiso_ingreso = response.data.permiso_ingreso;
-            this.endAt =response.data.fecha_fin;
-            this.endAt = moment(new Date(this.endAt)).format("YYYY-MM-DD hh:mm:ss"),
-
-            console.log("VIENDO FECHA******************");
-            alert(response.data.fecha_fin);
-            console.log(this.endAt);
-
-            alert(this.endAt);
+            alert(response.data.mensaje);
             this.realTimeInfo(this.resultado_final);
           })
           .catch((error) => {
@@ -412,6 +408,12 @@ export default {
             .format("HH:mm:ss");
         }
       }, 1000);
+    },
+    startCallBack: function(x) {
+      console.log(x);
+    },
+    endCallBack: function(x) {
+      console.log(x);
     },
   },
 };
