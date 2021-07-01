@@ -134,7 +134,7 @@
       <div class="card">
         <div class="card-header">Actualización Exitosa</div>
         <div class="card-body">
-          <h5 class="card-title">El pais se actualizo correctamente</h5>
+          <h5 class="card-title">La salida se actualizo correctamente</h5>
           <p class="h1 mb-2" style="text-align: center; font-size: 4em">
             <b-icon icon="check-circle" variant="success"></b-icon>
           </p>
