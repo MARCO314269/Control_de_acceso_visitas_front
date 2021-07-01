@@ -39,14 +39,11 @@
                   :start-time="start_at?start_at:startAt"
                   :end-time="end_at?end_at:fecha_fin"
                   :interval="1000"
-                  :start-label="'Until start:'"
-                  :end-label="'Until end:'"
-                  label-position="begin"
-                  :end-text="'Event ended!'"
-                  :day-txt="'days'"
-                  :hour-txt="'hours'"
-                  :minutes-txt="'minutes'"
-                  :seconds-txt="'seconds'">
+                  :end-text="'TIEMPO FINALIZAD'"
+                  :day-txt="'dias'"
+                  :hour-txt="'horas'"
+                  :minutes-txt="'minutos'"
+                  :seconds-txt="'segundos'">
                 </vue-countdown-timer>
          </td>
             <td class="center"><h4><span v-if="oa.alerta_tiempo_visita_activa == 1" class="badge badge-success ml-4">Permitido</span><span v-else class="badge badge-danger">No permitido</span></h4></td>
