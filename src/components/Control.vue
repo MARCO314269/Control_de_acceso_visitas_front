@@ -13,7 +13,7 @@
         v-model="id_visita"
       />
       <!--small class="notValid">{{msgName}}</small-->
-      <button type="button" @click="submition2" class="btn btn-primary mr-2">
+      <button type="button" @click="actualizarTabla" class="btn btn-primary mr-2">
         <i class="fa fa-search fa-fw" aria-hidden="true"></i>Registrar ingreso
       </button>
     </div>
@@ -29,8 +29,8 @@
             <th scope="col">Alertas</th>
           </tr>
         </thead>
-        <tbody v-for = "oa in objetoActual" :key ="oa.id_visita">
-          <tr @click="openRev(oa.id_visita)" v-if="oa.permiso_ingreso == true && oa.fecha_ingreso_visitante != ''">
+        <tbody v-for = "oa in resultadoFinal" :key ="oa.id_visita">
+          <tr @click="openRev(oa.id_visita)">
             <td>{{ oa.nombre }}</td>
             <td>{{ oa.fecha_ingreso_visitante }}</td>
             <td>{{ oa.fecha_fin }}</td>
@@ -196,7 +196,7 @@ export default {
       fecha_fin: null,
       fecha_inicio: null,
       permiso_ingreso: false,
-      resultado_final: [],
+      resultadoFinal: [],
       objetoActual: [],
       evento: '',
       condominio: '',
@@ -280,10 +280,8 @@ export default {
           .then((response) => {
             console.log("enviado******************");
             console.log(response.data);
-            this.resultado_final = response.data;
             this.permiso_ingreso = response.data.permiso_ingreso;
             alert(response.data.mensaje);
-            this.realTimeInfo(this.resultado_final);
           })
           .catch((error) => {
             console.log(error.response.data);
@@ -412,8 +410,25 @@ export default {
     endCallBack: function(x) {
       console.log(x);
     },
-  },
-};
+    actualizarTabla(){
+      console.log("actualiza tabla");
+      const path_visitas_activas =
+        "http://localhost:5000/api/visitas-activas"
+      console.log(this.id_visita);
+        axios
+          .get(path_visitas_activas)
+          .then((response) => {
+            console.log("viendo visitas activas******************");
+            this.resultadoFinal = response.data;
+            console.log(this.resultadoFinal)
+          })
+          .catch((error) => {
+            console.log(error.response.data);
+            store.commit("setSession", {});
+          });
+       },
+    },
+  };
 </script>
 
 <style scoped>
