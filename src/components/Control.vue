@@ -63,7 +63,7 @@
           class="text-center"
           :reset="true"
           :width="560"
-          :height="590">
+          :height="600">
           <div class="card">
                 <div class="card-body">
                     <div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -112,6 +112,9 @@
                                   <td>NUMERO DE EMERGENCIA</td>
                                   <td>{{ oa.numero_emergencia }}</td>
                                 </tr>
+                                 <tr>
+                                  <td colspan="2" style="text-align: right; background-color: white"><b-button variant="danger" @click="RegistrarSalida(oa.id_visita)">Registrar salida</b-button></td>
+                                </tr>
                                       </tbody>
                             </table>
                         </div>
@@ -119,7 +122,6 @@
                   </div>
                 </div>
                 <div class="mr-3" style="text-align: right;">
-                        <b-button variant="danger" @click="RegistrarSalida()">Registrar salida</b-button>
              </div>
             </div>
         </modal>
@@ -217,6 +219,7 @@ export default {
       fecha_salida_visitante: null,
       startAt:  moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
       fecha_fin_set: null,
+      id_visita_aux: "",
     };
   },
   mounted() {
@@ -328,22 +331,25 @@ export default {
     closeModalExito: function () {
       this.$modal.hide("mensaje-exito");
     },
-    RegistrarSalida(){
+    RegistrarSalida(id_visita){
+      this.id_visita_aux = id_visita
+      console.log(this.id_visita_aux)
       var fecha_actual = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       console.log(fecha_actual)
       this.$modal.show('registrarSalida');
     },
-    confirmarSalida(id_visita){
+    confirmarSalida(){
       console.log("confirmandoSalida");
       const path_visitas_salida =
-        "http://localhost:5000/api/visitas-salida/" + id_visita;
-      console.log(this.id_visita);
+        "http://localhost:5000/api/visitas-salida/" + this.id_visita_aux;
+      console.log(this.id_visita_aux);
         axios
           .put(path_visitas_salida, {
-            id_visita:this.id_visita,
+            id_visita:this.id_visita_aux,
             fecha_salida_visitante:this.fecha_actual,
             }).then((response) => {
             console.log("SE REGISTRA SALIDA");
+            this.actualizarTabla();
             console.log(response);
             this.$modal.hide('registrarSalida');
             this.$modal.hide('info-visitate')
