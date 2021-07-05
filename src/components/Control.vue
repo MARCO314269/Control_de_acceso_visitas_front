@@ -13,7 +13,7 @@
         v-model="id_visita"
       />
       <!--small class="notValid">{{msgName}}</small-->
-      <button type="button" @click="actualizarTabla" class="btn btn-primary mr-2">
+      <button type="button" @click="submition2" class="btn btn-primary mr-2">
         <i class="fa fa-search fa-fw" aria-hidden="true"></i>Registrar ingreso
       </button>
       <button type="button" @click="actualizarTabla" class="btn btn-primary mr-2">
@@ -119,7 +119,7 @@
                   </div>
                 </div>
                 <div class="mr-3" style="text-align: right;">
-                        <b-button variant="danger" @click="RegistrarSalida">Registrar salida</b-button>
+                        <b-button variant="danger" @click="RegistrarSalida()">Registrar salida</b-button>
              </div>
             </div>
         </modal>
@@ -287,6 +287,7 @@ export default {
             console.log("enviado******************");
             console.log(response.data);
             this.permiso_ingreso = response.data.permiso_ingreso;
+            this.actualizarTabla();
             alert(response.data.mensaje);
           })
           .catch((error) => {
