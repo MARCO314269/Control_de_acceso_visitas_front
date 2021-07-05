@@ -16,6 +16,9 @@
       <button type="button" @click="actualizarTabla" class="btn btn-primary mr-2">
         <i class="fa fa-search fa-fw" aria-hidden="true"></i>Registrar ingreso
       </button>
+      <button type="button" @click="actualizarTabla" class="btn btn-primary mr-2">
+        <i class="fa fa-search fa-fw" aria-hidden="true"></i> Actualizar tabla
+      </button>
     </div>
     <br /><br />
     <div class="row">
@@ -37,9 +40,9 @@
             <td>
                 <vue-countdown-timer
                   :start-time="start_at?start_at:startAt"
-                  :end-time="end_at?end_at:fecha_fin"
+                  :end-time="end_at?end_at:oa.fecha_fin"
                   :interval="1000"
-                  :end-text="'TIEMPO FINALIZAD'"
+                  :end-text="'TIEMPO FINALIZADO'"
                   :day-txt="'dias'"
                   :hour-txt="'horas'"
                   :minutes-txt="'minutos'"
@@ -54,61 +57,62 @@
     </div>
     <!--  end row -->
 
+        <!--  modal inicial info visitante -->
     <modal 
         name="info-visitate"
           class="text-center"
           :reset="true"
-          :width="580"
-          :height="580">
+          :width="560"
+          :height="590">
           <div class="card">
                 <div class="card-body">
                     <div class="table-wrapper-scroll-y my-custom-scrollbar">
                     <div class="row">
                         <div class="col-6">
-                            <h5 style="text-align:center">Infomacion completa</h5>
+                            <h4 style="text-align:center">Infomación completa:</h4>
                             <table class="table table-bordered table-striped mb-0">
-                              <tbody class="inf_visit">
+                                    <tbody v-for = "oa in resultadoFinal" :key ="oa.id_visita" class="inf_visit">
                                 <tr>
                                   <td>EVENTO:</td>
-                                  <td>{{ evento }}</td>
+                                  <td>{{ oa.nombre_visita }}</td>
                                 </tr>
                                 <tr>
                                   <td>CONDOMINIO</td>
-                                  <td>{{ condominio }}</td>
+                                  <td>{{ oa.id_condominio }}</td>
                                 </tr>
                                 <tr>
                                   <td>NOMBRE</td>
-                                  <td>{{ nombre }} </td>
+                                  <td>{{ oa.nombre }} </td>
                                 </tr>
                                 <tr>
                                   <td>APELLIDO PATERNO</td>
-                                  <td>{{ apellido_paterno }}</td>
+                                  <td>{{ oa.apellido_paterno }}</td>
                                 </tr>
                                 <tr>
                                   <td>APELLIDO MATERNO</td>
-                                  <td>{{ apellido_materno }}</td>
+                                  <td>{{ oa.apellido_materno }}</td>
                                 </tr>
                                 <tr>
                                   <td>TELEFONO CELULAR</td>
-                                  <td>{{ telefono_celular }}</td>
+                                  <td>{{ oa.telefono_celular }}</td>
                                 </tr>
                                 <tr>
                                   <td>TELEFONO PARTICULAR</td>
-                                  <td>{{ telefono_particular}}</td>
+                                  <td>{{ oa.telefono_particular}}</td>
                                 </tr>
                                 <tr>
                                   <td>EMAIL</td>
-                                  <td>{{ email }}</td>
+                                  <td>{{ oa.email }}</td>
                                 </tr>
                                 <tr>
                                   <td>NOMBRE CONTACTO DE EMERGENCIA</td>
-                                  <td>{{ nombre_contacto_emergencia}}</td>
+                                  <td>{{ oa.nombre_contacto_emergencia}}</td>
                                 </tr>
                                 <tr>
                                   <td>NUMERO DE EMERGENCIA</td>
-                                  <td>{{ numero_emergencia }}</td>
+                                  <td>{{ oa.numero_emergencia }}</td>
                                 </tr>
-                              </tbody>
+                                      </tbody>
                             </table>
                         </div>
                     </div>
@@ -119,6 +123,7 @@
              </div>
             </div>
         </modal>
+    
 
 
      <modal
@@ -188,6 +193,7 @@ export default {
           prob: 0,
         },
       },
+      infovisitante: null,
       validacion: {},
       id_visita: "",
       countdown: null,
@@ -216,7 +222,7 @@ export default {
   mounted() {
     this.seconds = this.resta1;
     this.expires_in = this.seconds;
-    this._setInterval();
+    this.actualizarTabla();
   },
   destroyed() {
     clearInterval(this.interval);
@@ -301,24 +307,14 @@ export default {
       console.log(JSON.stringify(this.objetoActual));
     },
     openRev(id_visita) {
-      let tm = {}
       const path_visitas_ingreso =
         "http://localhost:5000/api/visitas-ingreso/" + id_visita;
       axios
       .get(path_visitas_ingreso)
       .then((response =>{
-        tm = response.data
-        this.evento=tm.nombre_visita
-        this.condominio=tm.id_condominio
-        this.nombre=tm.nombre
-        this.apellido_paterno=tm.apellido_paterno
-        this.apellido_materno=tm.apellido_materno
-        this.telefono_celular=tm.telefono_celular
-        this.telefono_particular=tm.telefono_particular
-        this.email=tm.email
-        this.nombre_contacto_emergencia= tm.nombre_contacto_emergencia
-        this.numero_emergencia=tm.numero_emergencia
-        console.log("***")
+        this.infovisitante = response.data
+        console.log("VIENDO INFO VISITANTE***")
+        console.log(this.infovisitante)
       }))
       this.$modal.show("info-visitate");
     },
@@ -336,26 +332,25 @@ export default {
       console.log(fecha_actual)
       this.$modal.show('registrarSalida');
     },
-    confirmarSalida(){
+    confirmarSalida(id_visita){
       console.log("confirmandoSalida");
-      const path_visitas_ingreso =
-        "http://localhost:5000/api/visitas-salida/" + this.id_visita;
+      const path_visitas_salida =
+        "http://localhost:5000/api/visitas-salida/" + id_visita;
       console.log(this.id_visita);
-       if (this.id_visita) {
         axios
-          .put(path_visitas_ingreso, this.visitas)
-          .then((response) => {
-            console.log("enviado******************");
-            this.fecha_salida_visitante = this.fecha_actual
-            console.log(response.data);
+          .put(path_visitas_salida, {
+            id_visita:this.id_visita,
+            fecha_salida_visitante:this.fecha_actual,
+            }).then((response) => {
+            console.log("SE REGISTRA SALIDA");
+            console.log(response);
             this.$modal.hide('registrarSalida');
-            this.$modal.hide('info-visitate');
+            this.$modal.hide('info-visitate')
           })
           .catch((error) => {
             console.log(error.response.data);
             store.commit("setSession", {});
           });
-       }
     },
     closeModalSalida: function() {
       this.$modal.hide('registrarSalida');
