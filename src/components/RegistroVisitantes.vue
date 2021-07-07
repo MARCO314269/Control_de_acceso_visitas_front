@@ -68,7 +68,7 @@
       <b-button :disabled="habilitaBoton3" type="reiniciar" @click="onResetCam"  variant="danger">Reiniciar</b-button>
     </b-form>
 
-    <b-form @submit="onSubmit" v-if="match">
+    <b-form @submit="onSubmit" v-if="match" >
       <div class="form-header">       <!-- form header Datos personales -->    
         <h3><i class="fa fa-user"></i> Datos personales </h3>
       </div>
@@ -199,24 +199,28 @@
           </div>
         </modal><!-- ends modal-->
         
-        <modal 
+      <b-modal scrollable
+          ref="my-modal"
           name="modal-exito" 
           :clickToClose="false" 
           :reset="true"
-          :width="480"
-          :height="245">
+          :width= auto
+          :height= auto
+          >
           <div class="card">
               <div class="card-header">Información</div>
               <div class="card-body">
                   <div class="form-group">
-                      <h6>Tu informacion se guardo correctamente</h6>
+                      <h6>Favor de compartir esta url con tus visitantes:</h6>
+                      <p>{{this.url_visitante_id}}</p>
+                      <img :src="'data:image/jpeg;base64,'+img_data">
                   </div>
                   <div class="form-group my-4" style="text-align: right;">
-                      <b-button variant="info" @click="closeModalExito" @submit="resetForm">Aceptar</b-button>
+                      <b-button variant="info" @click="closeModalExito">Aceptar</b-button>
                   </div>
               </div>
           </div>
-        </modal><!-- ends modal-->
+        </b-modal><!-- ends modal-->
 
         <modal 
           name="modal-fallo" 
@@ -268,6 +272,10 @@
         ruta_imagen_rostro: '',
         ruta_imagen_identificacion: '',
         insert: true,
+        id_detalle_visita_aux: 0,
+        url_visitante: 'http://localhost:5000/api/visitas-ingreso/',
+        url_visitante_id: "",
+        img_data: [],
 
         form: {
           id_detalle_visita: this.$route.params.id_detalle_visita,
@@ -361,7 +369,8 @@
         this.$modal.hide('modal-camaras');
       },
       closeModalExito(){
-        this.$modal.hide('modal-exito');
+        this.$refs['my-modal'].hide();
+        //this.$modal.hide('modal-exito');
       },
       closeModalFallo(){
         this.$modal.hide('modal-fallo');
@@ -458,9 +467,13 @@
         this.form.uuid_visitante=this.uuid_visitante;
         this.form.ruta_imagen_rostro=this.ruta_imagen_rostro;
         this.form.ruta_imagen_identificacion=this.ruta_imagen_identificacion;
+        this.id_detalle_visita_aux =this.form.id_detalle_visita;
         console.log(this.form);
         axios.post('http://127.0.0.1:5000/visitantes/visita', this.form).then(response => {
           this.uuid_visitante = response.data.uuid_visitante;
+          this.url_visitante_id = this.url_visitante+this.id_detalle_visita_aux;
+          this.getQR (this.url_visitante_id)
+          this.$refs['my-modal'].show();
           console.log(response.data);
           this.$v.form.$touch();
         }).catch(error => {
@@ -475,6 +488,17 @@
           () => this.loading = false
         );
       },
+      getQR (mensaje) {
+      const path = 'http://localhost:5000/imagen_QR'
+      const data = { "datos_para_qr": mensaje }
+      axios.post(path,data).then(response => {
+        this.img_data = response.data.encoded_qr_data
+        console.log(this.img_data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    },
       resetForm(){
         this.form = {
         nombre: '',
