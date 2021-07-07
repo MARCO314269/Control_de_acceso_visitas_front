@@ -80,6 +80,7 @@
     </b-tabs>
   </b-card>
 
+        <!--  modal visita registrada exito -->
       <b-modal scrollable
           ref="my-modal"
           name="modal-exito" 
@@ -102,7 +103,8 @@
                   </div>
               </div>
           </div>
-        </b-modal><!-- ends modal-->
+        </b-modal
+        ><!-- ends modal-->
           
 
 
@@ -249,7 +251,4 @@ import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
 
 
 <style>
-.alinear{
-  text-align: center;
-}
 </style>

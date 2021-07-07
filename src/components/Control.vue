@@ -57,7 +57,7 @@
     </div>
     <!--  end row -->
 
-        <!--  modal inicial info visitante -->
+        <!--  modal info visitante -->
       <modal  
           ref="my-modal"
           name="info-visitate" 
@@ -124,11 +124,10 @@
                   </div>
                 </div>
                 <div class="mr-3" style="text-align: right;">
-             </div>
-        </modal><!-- ends modal-->
-    
+             </div></modal
+        ><!-- ends modal-->
 
-
+       <!--  modal salida exitosa -->
      <modal
       name="mensaje-exito"
       :clickToClose="false"
@@ -150,8 +149,9 @@
           </div>
         </div>
       </div> </modal
-    ><!-- ends modal-->
+       ><!-- ends modal-->
 
+       <!--  modal confirmar salida -->
      <modal 
             name="registrarSalida" 
             :clickToClose="false" 
@@ -168,7 +168,8 @@
                     </div>
                 </div>
             </div>
-        </modal><!-- ends modal-->
+        </modal
+       ><!-- ends modal-->
   </div>
 </template>
 
@@ -187,15 +188,6 @@ export default {
   data() {
     return {
       video: "http://localhost:5000/video_capture",
-      visitas: {
-        id_visita: "",
-        id_visitante: "",
-        uuid_visitante: "",
-        resultado_reconocimiento: {
-          id: "0",
-          prob: 0,
-        },
-      },
       infovisitante: null,
       validacion: {},
       id_visita: "",
@@ -207,29 +199,23 @@ export default {
       permiso_ingreso: false,
       resultadoFinal: [],
       objetoActual: [],
-      evento: '',
-      condominio: '',
-      nombre: '',
-      apellido_paterno: '',
-      apellido_materno: '',
-      telefono_celular: '',
-      telefono_particular: '',
-      email: '',
-      nombre_contacto_emergencia: '',
-      numero_emergencia: '',
       fecha_salida_visitante: null,
       startAt:  moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
       fecha_fin_set: null,
       id_visita_aux: "",
+      visitas: {
+        id_visita: "",
+        id_visitante: "",
+        uuid_visitante: "",
+        resultado_reconocimiento: {
+          id: "0",
+          prob: 0,
+        },
+      },
     };
   },
   mounted() {
-    this.seconds = this.resta1;
-    this.expires_in = this.seconds;
     this.actualizarTabla();
-  },
-  destroyed() {
-    clearInterval(this.interval);
   },
   methods: {
     submition() {
@@ -364,56 +350,6 @@ export default {
     },
     closeModalSalida: function() {
       this.$modal.hide('registrarSalida');
-    },
-    convertirFecha: function (fecha) {
-      var dia = parseInt(fecha.substring(0, 2));
-      var mes = parseInt(fecha.substring(3, 5)) - 1;
-      var anio = parseInt(fecha.substring(6, 10));
-      var hora = parseInt(fecha.substring(11, 13));
-      var min = parseInt(fecha.substring(14, 16));
-      var seg = parseInt(fecha.substring(17, 19));
-      var fi = new Date(anio, mes, dia, hora, min, seg);
-      return fi;
-    },
-    restarFecha: function (fecha_inicio, fecha_fin) {
-      var resta =
-        this.convertirFecha(fecha_fin) - this.convertirFecha(fecha_inicio);
-      console.log(resta);
-      return resta;
-    },
-    obtenerSegundos: function () {
-      axios
-        .get("http://localhost:5000/api/visitas-ingreso/4", {})
-        .then((response) => {
-          var resta1 = this.restarFecha(
-            response.data.fecha_inicio,
-            response.data.fecha_fin
-          );
-          console.log(typeof resta1);
-          return resta1;
-        })
-        .catch((error) => {
-          console.log(error.response.data);
-        });
-    },
-    _setInterval: function () {
-      this.interval = setInterval(() => {
-        if (this.expires_in === 0) {
-          clearInterval(this.interval);
-        } else {
-          this.expires_in -= 1;
-          this.countdown = moment
-            .utc(this.expires_in)
-            .subtract(1, "seconds")
-            .format("HH:mm:ss");
-        }
-      }, 1000);
-    },
-    startCallBack: function(x) {
-      console.log(x);
-    },
-    endCallBack: function(x) {
-      console.log(x);
     },
     actualizarTabla(){
       console.log("actualiza tabla");
