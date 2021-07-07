@@ -83,7 +83,8 @@
       <b-modal scrollable
           ref="my-modal"
           name="modal-exito" 
-          :clickToClose="false" 
+          hide-footer
+          hide-header
           :reset="true"
           :width= auto
           :height= auto

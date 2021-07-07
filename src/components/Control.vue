@@ -58,15 +58,17 @@
     <!--  end row -->
 
         <!--  modal inicial info visitante -->
-    <modal 
-        name="info-visitate"
-          class="text-center"
+      <modal  
+          ref="my-modal"
+          name="info-visitate" 
           :reset="true"
-          :width="560"
-          :height="600">
-          <div class="card">
+           hide-footer
+           hide-header
+          :width= 560
+          :height= 600
+          >
                 <div class="card-body">
-                    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <div>
                     <div class="row">
                         <div class="col-6">
                             <h4 style="text-align:center">Infomación completa:</h4>
@@ -123,8 +125,7 @@
                 </div>
                 <div class="mr-3" style="text-align: right;">
              </div>
-            </div>
-        </modal>
+        </modal><!-- ends modal-->
     
 
 
@@ -320,10 +321,12 @@ export default {
         console.log("VIENDO INFO VISITANTE***")
         console.log(this.infovisitante)
       }))
-      this.$modal.show("info-visitate");
+      this.$modal.show('info-visitate');
+      //this.$refs['my-modal'].show();
     },
     closeModalRev: function () {
-      this.$modal.hide("info-visitate");
+      this.$modal.hide('info-visitate')
+     //this.$refs['my-modal'].hide();
     },
     openGen() {
       this.$modal.hide("mensaje-exito");
@@ -437,4 +440,5 @@ export default {
 .inf_visit>tr>td:first-child{
 min-width: 300px;
 }
+
 </style>

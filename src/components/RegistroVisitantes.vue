@@ -202,7 +202,8 @@
       <b-modal scrollable
           ref="my-modal"
           name="modal-exito" 
-          :clickToClose="false" 
+          hide-footer
+          hide-header
           :reset="true"
           :width= auto
           :height= auto
@@ -211,7 +212,7 @@
               <div class="card-header">Información</div>
               <div class="card-body">
                   <div class="form-group">
-                      <h6>Favor de compartir esta url con tus visitantes:</h6>
+                      <h6>Tu registro fue exitoso, favor de mostrar este QR al entrar:</h6>
                       <p>{{this.url_visitante_id}}</p>
                       <img :src="'data:image/jpeg;base64,'+img_data">
                   </div>
