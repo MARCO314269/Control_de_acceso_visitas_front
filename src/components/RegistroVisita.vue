@@ -22,33 +22,20 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio y fin de tu evento:"  label-for="input-2">
-          <div>
-            <a-date-picker
-              v-model="form.fecha_inicio"
-              :disabled-date="disabledDate"
-              :show-time="{ format: 'HH:mm' }"
-              format="YYYY-MM-DD HH:mm"
-              placeholder="Inicio"
-              @openChange="handleStartOpenChange"
-            />
-          </div> 
-      <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
-      </b-form-group>
-
-      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio y fin de tu evento:"  label-for="input-2">
-          <div>
-            <a-date-picker
-              v-model="form.fecha_fin"
-              :disabled-date="disabledEndDate"
-              :show-time="{ format: 'HH:mm' }"
-              format="YYYY-MM-DD HH:mm"
-              placeholder="Fin"
-              :open="endOpen"
-              @openChange="handleEndOpenChange"
-            />
-          </div>
-      <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
+      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio y fin de tu evento:" label-for="input-2">
+              <a-locale-provider :locale="es_ES">
+                <a-range-picker
+                :disabled-date="disabledDate"
+                  :show-time="{ 
+                    format: 'HH:mm',
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('00:00:00', 'HH:mm:ss')],
+                    locale: 'es'}"
+                  format="YYYY-MM-DD HH:mm"
+                  :placeholder="['Fecha Inicio', 'Fecha Fin']"
+                  @change="onChange"
+                  @ok="onOk"
+                />
+              </a-locale-provider>
       </b-form-group>
 
       <b-form-group id="input-group-3" label="¿Esta será una visita recurrente semanal?" v-slot="{ ariaDescribedby }">
@@ -124,7 +111,7 @@ import { required } from "vuelidate/lib/validators";
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
 
-
+moment.locale('es-mx');
   export default {
     mixins: [validationMixin],
 
@@ -135,6 +122,7 @@ import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
     data() {
       return {
         form: {
+          c: 1,
           id_condominio: 1,
           fecha_inicio: null,
           fecha_fin: null,
@@ -176,6 +164,16 @@ import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
       },   
     },
     methods: {
+      moment,
+      onChange(dates, dateStrings) {
+        console.log("From: ", dates[0], ", to: ", dates[1]);
+        console.log("From: ", dateStrings[0], ", to: ", dateStrings[1]);
+        this.form.fecha_inicio = dateStrings[0];
+        this.form.fecha_fin = dateStrings[1];
+    },
+      onOk(value) {
+        console.log("onOk: ", value);
+    },
       validateState(nombre_visita) {
        const { $dirty, $error } = this.$v.form[nombre_visita];
        return $dirty ? !$error : null;
