@@ -29,7 +29,7 @@
         </div>
         <div>
             <div v-if="isCameraOpen" class="camera-canvas">
-                <video ref="camera" :width="canvasWidth" :height="canvasHeight" playsinline autoplay style="display: none"></video>
+                <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
                 <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
         </div>
@@ -56,7 +56,7 @@
         </div>
         <div>
             <div v-if="isCameraOpen2" class="camera-canvas">
-                <video ref="camera" :width="canvasWidth" :height="canvasHeight" playsinline autoplay style="display: none"></video>
+                <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
                 <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
          </div>
