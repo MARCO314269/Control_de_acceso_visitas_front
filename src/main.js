@@ -47,13 +47,3 @@ new Vue({
   router, store,
   render: h => h(App)
 }).$mount('#app')
-
-module.exports = {
-  presets: ["@vue/app"],
- plugins: [
-    [
-      "import",
-      { libraryName: "ant-design-vue", libraryDirectory: "es", style: true }
-    ]
-  ]
-};

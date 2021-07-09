@@ -180,12 +180,6 @@ import store from "../store";
 import * as moment from "moment";
 export default {
   name: "Main",
-  props: {
-    seconds: {
-      type: Number,
-      required: true,
-    },
-  },
   data() {
     return {
       video: "http://localhost:5000/video_capture",
@@ -205,6 +199,8 @@ export default {
       startAt:  moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
       fecha_fin_set: null,
       id_visita_aux: "",
+      start_at: null,
+      end_at: null,
       visitas: {
         id_visita: "",
         id_visitante: "",
@@ -321,7 +317,7 @@ export default {
       .get(path_visitas_ingreso)
       .then((response =>{
         this.infovisitante = response.data
-        console.log("VIENDO INFO VISITANTE***")
+        console.log("VIENDO INFORMACION COMPLETA DEL VISITANTE = " + id_visita)
         console.log(this.infovisitante)
       }))
       this.$modal.show('info-visitate');
@@ -339,8 +335,8 @@ export default {
     },
     RegistrarSalida(id_visita){
       this.id_visita_aux = id_visita
-      console.log(this.id_visita_aux)
       var fecha_actual = moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
+      console.log("obteniendo fecha de salida/fecha actual del sistema")
       console.log(fecha_actual)
       this.$modal.show('registrarSalida');
     },
@@ -369,17 +365,16 @@ export default {
       this.$modal.hide('registrarSalida');
     },
     actualizarTabla(){
-      console.log("actualiza tabla");
+      console.log("invocando servicio inicial");
       const path_visitas_activas =
         "http://localhost:5000/api/visitas-activas"
 /*       console.log(this.id_visita); */
         axios
           .get(path_visitas_activas)
           .then((response) => {
-            console.log("viendo visitas activas******************");
+            console.log("recibiendo informacion en tiempo real");
             console.log(response.data)
             this.resultadoFinal = response.data;
-            console.log(this.resultadoFinal)
           })
           .catch((error) => {
             console.log(error.response.data);

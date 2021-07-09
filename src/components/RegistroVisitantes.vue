@@ -30,10 +30,9 @@
         <div>
             <div v-if="isCameraOpen" class="camera-canvas">
                 <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
-                <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
+                <canvas v-show="true" style="position:absolute" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
         </div>
-        <vue-picture-swipe :items="items"></vue-picture-swipe>
       </b-form-group>
 
       <b-form-group id="input-group-11" label="Identificacion:" label-for="input-11">
@@ -60,7 +59,6 @@
                 <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
          </div>
-         <vue-picture-swipe :items="items"></vue-picture-swipe>
        </div>
       </b-form-group>
 
@@ -277,7 +275,7 @@
         url_visitante: 'http://localhost:5000/api/visitas-ingreso/',
         url_visitante_id: "",
         img_data: [],
-
+        auto: 0,
         form: {
           id_detalle_visita: this.$route.params.id_detalle_visita,
           uuid_visitante: '',
@@ -522,3 +520,10 @@
       
   }
 </script>
+
+<style scoped>
+video {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+</style>
