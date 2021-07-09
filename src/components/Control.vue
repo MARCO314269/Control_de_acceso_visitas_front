@@ -3,22 +3,23 @@
     <img :src="video" width="700" height="600" />
     <br /><br />
     <div class="form-inline">
-      <label for="nombre" class="col-form-label mr-2"> Visita</label>
-      <input
+      <!-- <label for="nombre" class="col-form-label mr-2"> Visita</label> -->
+<!--       <input
         type="text"
         ref="id_visita"
         required
         class="form-control mr-3"
         placeholder="123"
         v-model="id_visita"
-      />
+      /> -->
       <!--small class="notValid">{{msgName}}</small-->
       <button type="button" @click="submition2" class="btn btn-primary mr-2">
-        <i class="fa fa-search fa-fw" aria-hidden="true"></i>Registrar ingreso
+        Registrar ingreso
       </button>
-      <button type="button" @click="actualizarTabla" class="btn btn-primary mr-2">
+<!--       <button type="button" @click="actualizarTabla" class="btn btn-primary mr-2">
         <i class="fa fa-search fa-fw" aria-hidden="true"></i> Actualizar tabla
-      </button>
+      </button> -->
+ 
     </div>
     <br /><br />
     <div class="row">
@@ -43,13 +44,13 @@
                   :end-time="end_at?end_at:oa.fecha_fin"
                   :interval="1000"
                   :end-text="'TIEMPO FINALIZADO'"
-                  :day-txt="'dias'"
-                  :hour-txt="'horas'"
-                  :minutes-txt="'minutos'"
-                  :seconds-txt="'segundos'">
+                  :day-txt="'dias '"
+                  :hour-txt="':'"
+                  :minutes-txt="':'"
+                  :seconds-txt="''">
                 </vue-countdown-timer>
          </td>
-            <td class="center"><h4><span v-if="oa.alerta_tiempo_visita_activa == 1" class="badge badge-success ml-4">Permitido</span><span v-else class="badge badge-danger">No permitido</span></h4></td>
+            <td class="center"><h4><span v-if="oa.alerta_tiempo_visita_activa == 1" class="badge badge-success ml-4">Visita activa</span><span v-else class="badge badge-danger">Tiempo excedido</span></h4></td>
             <td></td>
           </tr>
         </tbody>
@@ -115,7 +116,7 @@
                                   <td>{{ oa.numero_emergencia }}</td>
                                 </tr>
                                  <tr>
-                                  <td colspan="2" style="text-align: right; background-color: white"><b-button variant="danger" @click="RegistrarSalida(oa.id_visita)">Registrar salida</b-button></td>
+                                  <td colspan="2" style="text-align: right; background-color: white"><b-button variant="primary" @click="RegistrarSalida(oa.id_visita)">Registrar salida</b-button></td>
                                 </tr>
                                       </tbody>
                             </table>
@@ -163,8 +164,8 @@
                 <div class="card-body">
                       <p class="card-text">¿Está seguro que desea registar la salida?</p>
                     <div class="my-4" style="text-align: right;">
-                        <b-button variant="warning" class="mr-4" @click="confirmarSalida">Si</b-button>
-                        <b-button variant="danger" class="mr-4" @click="closeModalSalida">Cerrar</b-button>
+                        <b-button variant="primary" class="mr-4" @click="confirmarSalida">Si</b-button>
+                        <b-button variant="secondary" class="mr-4" @click="closeModalSalida">Cerrar</b-button>
                     </div>
                 </div>
             </div>
@@ -188,6 +189,7 @@ export default {
   data() {
     return {
       video: "http://localhost:5000/video_capture",
+      datos_QR: {},
       infovisitante: null,
       validacion: {},
       id_visita: "",
@@ -220,10 +222,10 @@ export default {
   methods: {
     submition() {
       console.log("submition");
-      const path_visitas_ingreso =
-        "http://localhost:5000/api/visitas-ingreso/" + this.id_visita;
+      /* const path_visitas_ingreso =
+        "http://localhost:5000/api/visitas-ingreso/" + this.id_visita; */
       axios
-        .get(path_visitas_ingreso)
+        .get(this.datos_QR[0])
         .then((response) => {
           console.log(response.data);
           this.visitas.id_visita = response.data.id_visita;
@@ -244,9 +246,11 @@ export default {
         });
     },
     submition2() {
-      this.id_visita = this.$refs.id_visita.value;
+      /* this.id_visita = this.$refs.id_visita.value; */
       const path_video_vigilancia =
         "http://localhost:5000/videos_vigilancia/results";
+      const path_QR =
+      "http://localhost:5000/videos_vigilancia/QR";
       console.log("submition2");
       axios
         .get(path_video_vigilancia)
@@ -254,6 +258,20 @@ export default {
           console.log(response.data);
           this.validacion = response.data;
           this.visitas.resultado_reconocimiento = response.data;
+        })
+        .catch((error) => {
+          console.log(error.response.status);
+          console.log(error.response.data);
+          this.msnErrorIrreconocible = error.response.data["exceptionLongDescription"];
+          this.$modal.show("modal-general");
+          store.commit("setSession", {});
+        });
+      axios
+        .get(path_QR)
+        .then((response) => {
+          console.log("QR");
+          this.datos_QR = response.data.data;
+          console.log(this.datos_QR[0])
           this.submition();
         })
         .catch((error) => {
@@ -261,18 +279,17 @@ export default {
           console.log(error.response.data);
           this.msgErr = error.response.data["exceptionLongDescription"];
           this.msnErrorIrreconocible = this.msgErr;
-          this.$modal.show("modal-general");
           store.commit("setSession", {});
         });
     },
     enviarValidacion() {
       console.log("enviarValidacion");
-      const path_visitas_ingreso =
-        "http://localhost:5000/api/visitas-ingreso/" + this.id_visita;
+      /* const path_visitas_ingreso =
+        "http://localhost:5000/api/visitas-ingreso/" + this.id_visita; */
       console.log(this.visitas);
-      if (this.id_visita) {
+      if (this.datos_QR[0]) {
         axios
-          .put(path_visitas_ingreso, this.visitas)
+          .put(this.datos_QR[0], this.visitas)
           .then((response) => {
             console.log("enviado******************");
             console.log(response.data);
@@ -355,11 +372,12 @@ export default {
       console.log("actualiza tabla");
       const path_visitas_activas =
         "http://localhost:5000/api/visitas-activas"
-      console.log(this.id_visita);
+/*       console.log(this.id_visita); */
         axios
           .get(path_visitas_activas)
           .then((response) => {
             console.log("viendo visitas activas******************");
+            console.log(response.data)
             this.resultadoFinal = response.data;
             console.log(this.resultadoFinal)
           })

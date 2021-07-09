@@ -472,7 +472,7 @@
         console.log(this.form);
         axios.post('http://127.0.0.1:5000/visitantes/visita', this.form).then(response => {
           this.uuid_visitante = response.data.uuid_visitante;
-          this.url_visitante_id = this.url_visitante+this.id_detalle_visita_aux;
+          this.url_visitante_id = this.url_visitante+response.data.id_visita;
           this.getQR (this.url_visitante_id)
           this.$refs['my-modal'].show();
           console.log(response.data);
