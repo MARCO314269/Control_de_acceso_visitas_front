@@ -10,32 +10,29 @@
   <div class="container my-4">
   <div>
     <b-form @submit="postRespuesta" v-if="mostrarCamaras"> 
-      <b-form-group id="input-group-10" label="Rostro:" label-for="input-10">
+      <b-form-group>
         <div style="display: flex; justify-content: flex-start;">
-            <img style="height: 100px;" v-if="isCameraOpen"
-                 src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"
-                  @click="capture"/>
+            <img style="height: 100px;" v-if="isCameraOpen" src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png" @click="capture"/>
             <div class="camera-button">
-                <button type="button" 
-                        style="margin-left: 10%; background-color: white; border: 0px;"
-                        @click="toggleCamera"
-                >
+                <button type="button" style="margin-left: 10%; background-color: white; border: 0px;" @click="toggleCamera">
+                <div v-show="!isCameraOpen">
+                <h6>ROSTRO</h6>
+                </div>
+                <div>
                  <span v-if="!isCameraOpen"><img style="height: 100px;" class="button-img"
                                 src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
                  <span v-else><img style="height: 100px;" class="button-img"
                                 src="https://img.icons8.com/material-outlined/50/000000/cancel.png"></span>
+                </div>
                 </button>
             </div>
         </div>
         <div>
             <div v-if="isCameraOpen" class="camera-canvas">
-                <video ref="camera" :width="canvasWidth" :height="canvasHeight" playsinline autoplay></video>
-                <canvas v-show="true" style="position:absolute" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
+                <video v-show="!isPhotoTaken"  ref="camera" :width="canvasWidth" :height="canvasHeight" playsinline autoplay></video>
+                <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
         </div>
-      </b-form-group>
-
-      <b-form-group id="input-group-11" label="Identificacion:" label-for="input-11">
         <div class="camera-box">
         <div style="display: flex; justify-content: flex-start;">
             <img style="height: 100px;" v-if="isCameraOpen2"
@@ -46,16 +43,21 @@
                         style="margin-left: 10%; background-color: white; border: 0px;"
                         @click="toggleCamera2"
                 >
+                <div v-show="!isCameraOpen2">
+                <h6>IDENTIFICACIÓN</h6>
+                </div>
+                <div>
                  <span v-if="!isCameraOpen2"><img style="height: 100px;" class="button-img"
                                 src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
                  <span v-else><img style="height: 100px;" class="button-img"
                                 src="https://img.icons8.com/material-outlined/50/000000/cancel.png"></span>
+                </div>
                 </button>
             </div>
         </div>
         <div>
             <div v-if="isCameraOpen2" class="camera-canvas">
-                <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
+                <video v-show="!isPhotoTaken2" ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
                 <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
          </div>
@@ -277,6 +279,8 @@
         url_visitante_id: "",
         img_data: [],
         auto: 0,
+        isPhotoTaken: false,
+        isPhotoTaken2: false,
         form: {
           id_detalle_visita: this.$route.params.id_detalle_visita,
           uuid_visitante: '',
@@ -379,6 +383,7 @@
       toggleCamera(){
         if(this.isCameraOpen){
           this.isCameraOpen =false;
+          this.isPhotoTaken = false;
         }else{
           this.isCameraOpen = true;
           this.startCameraStream();
@@ -404,6 +409,7 @@
           });
       },
       capture() {
+          this.isPhotoTaken = !this.isPhotoTaken;
           const FLASH_TIMEOUT = 50;
           let self = this;
           setTimeout(() => {
@@ -420,6 +426,7 @@
       toggleCamera2(){
         if(this.isCameraOpen2){
           this.isCameraOpen2 =false;
+          this.isPhotoTaken2 = false;
         }else{
           this.isCameraOpen2 = true;
           this.startCameraStream2();
@@ -450,6 +457,7 @@
           )
       },
       capture2() {
+          this.isPhotoTaken2 = !this.isPhotoTaken2;
           const FLASH_TIMEOUT = 50;
           let self = this;
           setTimeout(() => {
@@ -514,6 +522,8 @@
         }
       },
       onResetCam(){
+        this.isPhotoTaken = !this.isPhotoTaken;
+        this.isPhotoTaken2 = !this.isPhotoTaken2;
         this.toggleCamera()
         this.toggleCamera2()
         this.stopCameraStream()
