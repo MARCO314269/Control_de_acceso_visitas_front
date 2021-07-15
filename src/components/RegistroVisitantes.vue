@@ -1,6 +1,6 @@
 <template>
-<div class="ancho centra" style="max-width:1900px">
-  <div class="card defaultColor">
+<div class="container-xl p-2">
+  <div class="card">
     <div class="card-header">
          <label class="control-label h1">Registro de Visitantes</label>
          <h5>Para dar de alta a un visitante se requiere verificar su identidad.</h5>
@@ -14,9 +14,9 @@
         <div style="display: flex; justify-content: flex-start;">
             <img style="height: 100px;" v-if="isCameraOpen"
                  src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"
-                 class="button-img camera-shoot" @click="capture"/>
+                  @click="capture"/>
             <div class="camera-button">
-                <button type="button" class="button is-rounded cam-button"
+                <button type="button" 
                         style="margin-left: 10%; background-color: white; border: 0px;"
                         @click="toggleCamera"
                 >
@@ -29,7 +29,7 @@
         </div>
         <div>
             <div v-if="isCameraOpen" class="camera-canvas">
-                <video ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
+                <video ref="camera" :width="canvasWidth" :height="canvasHeight" playsinline autoplay></video>
                 <canvas v-show="true" style="position:absolute" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
         </div>
@@ -191,7 +191,7 @@
                   </div>
 
                   <div class="form-group my-4" style="text-align: right;">
-                      <b-button variant="info" @reset="onResetCam" @click="closeModalCamaras">Aceptar</b-button>
+                      <b-button variant="info" @click="closeModalCamaras">Aceptar</b-button>
                   </div>
               </div>
           </div>
@@ -247,6 +247,7 @@
 
 
 <script>
+  import router from '../router'
   import axios from 'axios';
   import "vue-range-slider/dist/vue-range-slider.css";
   import { validationMixin } from "vuelidate";
@@ -368,7 +369,8 @@
         this.$modal.hide('modal-camaras');
       },
       closeModalExito(){
-        this.$refs['my-modal'].hide();
+        //this.$refs['my-modal'].hide();
+        router.push({'name':'ConfirmaRegistro'});
         //this.$modal.hide('modal-exito');
       },
       closeModalFallo(){
@@ -515,6 +517,9 @@
         this.toggleCamera()
         this.toggleCamera2()
         this.stopCameraStream()
+      },
+      openConfirmaPage: function() {
+        router.push({'name':'ConfirmaRegistro'});
       },
     }
       

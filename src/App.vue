@@ -12,13 +12,13 @@
 
 <script>
   import Footer from './Footer';
-  //import Header from './Header';
+  import Header from './Header';
   
   export default {
     name: "App",
     components: {
       'Footer' : Footer,
-    //  'Header': Header
+      'Header': Header
     }
   }
 </script>
