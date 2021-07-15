@@ -389,5 +389,9 @@ export default {
 .inf_visit>tr>td:first-child{
 min-width: 300px;
 }
+video {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
 
 </style>
