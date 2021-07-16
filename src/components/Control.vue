@@ -50,7 +50,7 @@
                   :seconds-txt="''">
                 </vue-countdown-timer>
          </td>
-            <td class="center"><h4><span v-if="oa.alerta_tiempo_visita_activa == 1" class="badge badge-success ml-4">Visita activa</span><span v-else class="badge badge-danger">Tiempo excedido</span></h4></td>
+            <td class="center"><h4><span v-if="oa.alerta_tiempo_visita_activa != 0" class="badge badge-success ml-4">Visita activa</span><span v-else class="badge badge-danger">Tiempo excedido</span></h4></td>
             <td></td>
           </tr>
         </tbody>
