@@ -1,6 +1,6 @@
 <template>
   <div class="container my-5">
-    <img :src="video" class="rounded" alt="...">
+    <img :src="video" class="video" alt="...">
     <br /><br />
     <div class="form-inline">
       <!-- <label for="nombre" class="col-form-label mr-2"> Visita</label> -->
@@ -389,7 +389,7 @@ export default {
 .inf_visit>tr>td:first-child{
 min-width: 300px;
 }
-video {
+.video {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
 }
