@@ -392,6 +392,8 @@ min-width: 300px;
 .video {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+  height: 100%;
+  width: 100%;
 }
 
 </style>
