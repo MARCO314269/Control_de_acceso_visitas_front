@@ -1,6 +1,6 @@
 <template>
   <div class="container my-5">
-    <img :src="video" class="img-fluid" alt="Responsive image">
+    <img :src="video" class="rounded" alt="...">
     <br /><br />
     <div class="form-inline">
       <!-- <label for="nombre" class="col-form-label mr-2"> Visita</label> -->
