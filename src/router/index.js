@@ -6,8 +6,12 @@ import RegistroVisita from '@/components/RegistroVisita'
 import RegistroVisitantes from '@/components/RegistroVisitantes'
 import Control from '@/components/Control'
 import CuentaAtras from '@/components/CuentaAtras'
+import Video_vigilancia from '@/components/Video_vigilancia'
+import ConfirmaRegistro from '@/components/ConfirmaRegistro'
+import ConsultaRegistro from '@/components/ConsultaRegistro'
 
 Vue.use(Router)
+
 
 export default new Router({
   routes: [
@@ -36,6 +40,21 @@ export default new Router({
       path: '/cuenta-atras',
       name: 'CuentaAtras',
       component: CuentaAtras
+    },
+    {
+      path: '/vigilancia',
+      name: 'Video_vigilancia',
+      component: Video_vigilancia
+    },
+    {
+      path: '/confirmaregistro',
+      name: 'ConfirmaRegistro',
+      component: ConfirmaRegistro
+    },
+    {
+      path: '/consulta-registro',
+      name: 'ConsultaRegistro',
+      component: ConsultaRegistro
     },
   ],
   mode: 'history'

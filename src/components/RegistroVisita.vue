@@ -11,32 +11,51 @@
       </b-tab >  <!--end tab visita -->
 
       <b-tab title="Evento" style="text-aling: center">
-      <b-form @submit="onSubmit" v-if="true">
+          <b-form @submit="onSubmit" v-if="true">
+            <b-form-group
+              id="input-group-1"
+              label="Nombre evento:"
+              label-for="input-1">
+              <b-form-input
+                id="input-1"
+                v-model="$v.form.nombre_visita.$model"
+                :state="validateState('nombre_visita')"
+                placeholder="Ingresa el nombre de tu evento"
+              ></b-form-input>
+            </b-form-group>
 
-      <b-form-group id="input-group-1" label="Nombre evento:" label-for="input-1">
-        <b-form-input
-          id="input-1"
-          v-model="$v.form.nombre_visita.$model"
-          :state="validateState('nombre_visita')"
-          placeholder="Ingresa el nombre de tu evento"
-        ></b-form-input>
-      </b-form-group>
-
-      <b-form-group id="input-group-2" label="Selecciona la fecha y hora inicio y fin de tu evento:" label-for="input-2">
-              <a-locale-provider :locale="es_ES">
-                <a-range-picker
-                :disabled-date="disabledDate"
-                  :show-time="{ 
-                    format: 'HH:mm',
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('00:00:00', 'HH:mm:ss')],
-                    locale: 'es'}"
+            <b-form-group
+              id="input-group-2"
+              label="Selecciona la fecha y hora inicio y fin de tu evento:"
+              label-for="input-2">
+               <div>
+                <a-date-picker
+                  v-model="form.fecha_inicio"
+                  :disabled-date="disabledDate"
+                  :show-time="{ format: 'HH:mm' }"
                   format="YYYY-MM-DD HH:mm"
-                  :placeholder="['Fecha Inicio', 'Fecha Fin']"
-                  @change="onChange"
-                  @ok="onOk"
+                  placeholder="Inicio"
+                  @openChange="handleStartOpenChange"
                 />
-              </a-locale-provider>
-      </b-form-group>
+              </div> 
+            </b-form-group>
+
+            <b-form-group
+              id="input-group-2"
+              label="Selecciona la fecha y hora inicio y fin de tu evento:"
+              label-for="input-2">
+              <div>
+                <a-date-picker
+                  v-model="form.fecha_fin"
+                  :disabled-date="disabledEndDate"
+                  :show-time="{ format: 'HH:mm' }"
+                  format="YYYY-MM-DD HH:mm"
+                  placeholder="Fin"
+                  :open="endOpen"
+                  @openChange="handleEndOpenChange"
+                />
+              </div>
+            </b-form-group> 
 
       <b-form-group id="input-group-3" label="¿Esta será una visita recurrente semanal?" v-slot="{ ariaDescribedby }">
         <b-form-checkbox-group

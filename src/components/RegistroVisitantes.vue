@@ -1,6 +1,17 @@
 <template>
-<div class="container-xl p-2">
-  <div class="card">
+<div class="container my-6" >
+      <div class="card-header" v-if="mostrarForm">
+         <label class="control-label h1">Bienvenido</label>
+         <h5>Aqui inicia el proceso de registro para tu visita</h5>
+         <br>
+         <div>
+         <b-button variant="success"  @click="openRegistro(); closeInicio();">Comenzar registro</b-button>
+         </div>
+         <div>
+         <b-button variant="light" @click="openSearchReg">¿Ya te has registrado anteriormente?</b-button>
+         </div>
+    </div>
+  <div class="card" v-if="mostrarForm1">
     <div class="card-header">
          <label class="control-label h1">Registro de Visitantes</label>
          <h5>Para dar de alta a un visitante se requiere verificar su identidad.</h5>
@@ -9,7 +20,7 @@
     </div>
   <div class="container my-4">
   <div>
-    <b-form @submit="postRespuesta" v-if="mostrarCamaras"> 
+    <b-form v-if="condition"> 
       <b-form-group>
         <div style="display: flex; justify-content: flex-start;">
             <img style="height: 100px;" v-if="isCameraOpen" src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png" @click="capture"/>
@@ -32,7 +43,15 @@
                 <video v-show="!isPhotoTaken"  ref="camera" :width="canvasWidth" :height="canvasHeight" playsinline autoplay></video>
                 <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
+            <br>
+              <b-button :disabled="habilitaBoton3" variant="primary" @click="mostrarCamaraRostro = !mostrarCamaraRostro">Continuar</b-button>
+              <b-button :disabled="habilitaBoton3" @click="onResetCamRostro" variant="danger">Reiniciar</b-button>
         </div>
+        </b-form-group>
+      </b-form>
+
+     <b-form @submit="postRespuesta" v-if="condition2"> 
+        <b-form-group>
         <div class="camera-box">
         <div style="display: flex; justify-content: flex-start;">
             <img style="height: 100px;" v-if="isCameraOpen2"
@@ -65,7 +84,7 @@
       </b-form-group>
 
       <b-button :disabled="habilitaBoton" type="submit" @submit="postRespuesta" variant="primary">Validar</b-button>
-      <b-button :disabled="habilitaBoton3" type="reiniciar" @click="onResetCam"  variant="danger">Reiniciar</b-button>
+      <b-button :disabled="habilitaBoton4" type="reiniciar" @click="onResetCamIdentificacion"  variant="danger">Reiniciar</b-button>
     </b-form>
 
     <b-form @submit="onSubmit" v-if="match" >
@@ -268,7 +287,10 @@
         canvasWidth:470,
         items: null,
         match: '',
+        mostrarForm: true,
+        mostrarForm1: '',
         mostrarCamaras: true,
+        mostrarCamaraRostro: true,
         mensaje: '',
         uuid_visitante: '',
         ruta_imagen_rostro: '',
@@ -338,6 +360,20 @@
         var dato = true
           && this.form2.rostro_b64
           return !dato;
+      },
+      habilitaBoton4: function() {
+        var dato = true
+          && this.form2.identificacion_b64
+          return !dato;
+      },
+      condition() {
+        this.mostrarCamaras;
+        this.mostrarCamaraRostro
+        return this.mostrarCamaras == true && this.mostrarCamaraRostro == true;
+      }, 
+      condition2(){
+        this.mostrarCamaras
+        return this.mostrarCamaras == true && this.mostrarCamaraRostro == false;
       },
     },
     methods: {
@@ -521,15 +557,32 @@
         email: ''
         }
       },
-      onResetCam(){
+      onResetCamRostro(){
         this.isPhotoTaken = !this.isPhotoTaken;
-        this.isPhotoTaken2 = !this.isPhotoTaken2;
+        this.form2.rostro_b64 = null;
         this.toggleCamera()
+        this.stopCameraStream()
+        
+      },
+      onResetCamIdentificacion(){
+        this.isPhotoTaken2 = !this.isPhotoTaken2;
+        this.form2.identificacion_b64 = null;
         this.toggleCamera2()
         this.stopCameraStream()
       },
       openConfirmaPage: function() {
         router.push({'name':'ConfirmaRegistro'});
+      },
+      openRegistro(){
+      this.mostrarForm1 = true;
+      },
+      closeInicio(){
+      this.mostrarForm = false;
+      },
+      openSearchReg(){
+        //this.$refs['my-modal'].hide();
+        router.push({'name':'ConsultaRegistro'});
+        //this.$modal.hide('modal-exito');
       },
     }
       
