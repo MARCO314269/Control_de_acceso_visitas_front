@@ -8,8 +8,8 @@
 
             <div class="row">
                 <div class="form-inline">
-                    <label for="nombre" class="col-form-label mr-2">Correo electronico:</label>
-                    <input type="text" required class="form-control mr-3"  placeholder="ejemplo@gmail.com" v-model="name">
+                    <label for="nombre" class="col-form-label mr-4">Correo electronico:</label>
+                    <input type="text" required class="form-control mr-4"  placeholder="ejemplo@gmail.com" v-model="name">
                     <!--small class="notValid">{{msgName}}</small-->
 
                     <button type="button" @click="submition" class="btn btn-primary mr-2">

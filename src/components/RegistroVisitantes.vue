@@ -1,27 +1,88 @@
 <template>
 <div class="container my-6" >
-      <div class="card-header" v-if="mostrarForm">
+  <!-- INICIO DE PROCESOS-->
+   <div class="card-header" v-if="mostrarForm">
          <label class="control-label h1">Bienvenido</label>
          <h5>Aqui inicia el proceso de registro para tu visita</h5>
+         <h5>Por favor introduce tu correo electronico:</h5>
          <br>
-         <div>
-         <b-button variant="success"  @click="openRegistro(); closeInicio();">Comenzar registro</b-button>
-         </div>
-         <div>
-         <b-button variant="light" @click="openSearchReg">¿Ya te has registrado anteriormente?</b-button>
-         </div>
-    </div>
+         <br>
+            <div class="row">
+                <div class="form-inline">
+                    <label for="idvisita" class="col-form-label mr-4">Correo electronico:</label>
+                    <input type="text" required class="form-control mr-4"  placeholder="ejemplo@gmail.com" v-model="idvisita">
+                    <!--small class="notValid">{{msgName}}</small-->
+
+                    <button type="button" @click="buscaInfoPrevia()" class="btn btn mr-2 button_color">
+                        <i class="fa fa-search fa-fw" aria-hidden="true"></i> Buscar</button>
+                </div>
+              </div>
+            </div> <!-- end row -->
+
+      <!-- INFO DE CORREO SI EXISTE-->
+   <div class="card-header" v-if="mostrarDatosCorreo">
+              <div class="card-body">
+                    <div>
+                    <div class="row">
+                        <div class="col-6">
+                            <h4 style="text-align:center" class="inf_visit">Encontramos esta informacion con tu correo:</h4>
+                            <table class="table table-bordered table-striped mb-0">
+                                    <tbody class="inf_visit"> 
+                                <tr>
+                                  <td>NOMBRE</td>
+                                  <td>{{ infovisitante.nombre }} </td>
+                                </tr>
+                                <tr>
+                                  <td>APELLIDO PATERNO</td>
+                                  <td>{{ infovisitante.apellido_paterno }}</td>
+                                </tr>
+                                <tr>
+                                  <td>APELLIDO MATERNO</td>
+                                  <td>{{ infovisitante.apellido_materno }}</td>
+                                </tr>
+                                <tr>
+                                  <td>TELEFONO CELULAR</td>
+                                  <td>{{ infovisitante.telefono_celular }}</td>
+                                </tr>
+                                <tr>
+                                  <td>TELEFONO PARTICULAR</td>
+                                  <td>{{ infovisitante.telefono_particular}}</td>
+                                </tr>
+                                <tr>
+                                  <td>EMAIL</td>
+                                  <td>{{ infovisitante.email }}</td>
+                                </tr>
+                                <tr>
+                                  <td>NOMBRE CONTACTO DE EMERGENCIA</td>
+                                  <td>{{ infovisitante.nombre_contacto_emergencia}}</td>
+                                </tr>
+                                <tr>
+                                  <td>NUMERO DE EMERGENCIA</td>
+                                  <td>{{ infovisitante.numero_emergencia }}</td>
+                                </tr>
+                                      </tbody>
+                            </table>
+                        </div>
+                    </div>
+                  </div>
+
+                  <br>
+                    <button class="btn btn mr-2 button_color" @click="onSubmitFast(); closeDatosCorreo();">Registrar visita</button>
+                    <button class="btn btn mr-2 button_color_red"  @click="openRegistro(); closeDatosCorreo();">¿No eres tu?</button>
+              </div>
+        </div>
+  <!-- AQUI COMIENZA PROCESO DE REGISTRO-->
+   <div>
   <div class="card" v-if="mostrarForm1">
-    <div class="card-header">
-         <label class="control-label h1">Registro de Visitantes</label>
-         <h5>Para dar de alta a un visitante se requiere verificar su identidad.</h5>
-         <h5>Se debe tomar una fotografía de frente y una imagen de su identificación.</h5>
-         <h5>El lugar debe estar bien iluminado y se debe revisar que los datos de la identificación sean legibles en la imagen.</h5>
-    </div>
   <div class="container my-4">
-  <div>
-    <b-form v-if="condition"> 
+    <b-form v-if="condition && !match"> 
       <b-form-group>
+            <div class="card-header" >
+                <label class="control-label h1">Registro de Visitantes</label>
+                <h5>Para dar de alta a un visitante se requiere verificar su identidad.</h5>
+                <h5>Se debe tomar una fotografía de frente y una imagen de su identificación.</h5>
+                <h5>El lugar debe estar bien iluminado y se debe revisar que los datos de la identificación sean legibles en la imagen.</h5>
+            </div>
         <div style="display: flex; justify-content: flex-start;">
             <img style="height: 100px;" v-if="isCameraOpen" src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png" @click="capture"/>
             <div class="camera-button">
@@ -29,6 +90,9 @@
                 <div v-show="!isCameraOpen">
                 <h6>ROSTRO</h6>
                 </div>
+                <div>
+                  {{this.imagen}}
+                  </div>
                 <div>
                  <span v-if="!isCameraOpen"><img style="height: 100px;" class="button-img"
                                 src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
@@ -44,8 +108,8 @@
                 <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
             <br>
-              <b-button :disabled="habilitaBoton3" variant="primary" @click="mostrarCamaraRostro = !mostrarCamaraRostro">Continuar</b-button>
-              <b-button :disabled="habilitaBoton3" @click="onResetCamRostro" variant="danger">Reiniciar</b-button>
+              <button :disabled="habilitaBoton3" class="btn btn mr-2 button_color" @click="mostrarCamaraRostro = !mostrarCamaraRostro">Continuar</button>
+              <button :disabled="habilitaBoton3" class="btn btn mr-2 button_color_red" @click="onResetCamRostro" variant="danger">Reiniciar</button>
         </div>
         </b-form-group>
       </b-form>
@@ -53,6 +117,12 @@
      <b-form @submit="postRespuesta" v-if="condition2"> 
         <b-form-group>
         <div class="camera-box">
+            <div class="card-header" >
+                <label class="control-label h1">Registro de Visitantes</label>
+                <h5>Para dar de alta a un visitante se requiere verificar su identidad.</h5>
+                <h5>Se debe tomar una fotografía de frente y una imagen de su identificación.</h5>
+                <h5>El lugar debe estar bien iluminado y se debe revisar que los datos de la identificación sean legibles en la imagen.</h5>
+            </div>
         <div style="display: flex; justify-content: flex-start;">
             <img style="height: 100px;" v-if="isCameraOpen2"
                  src="https://img.icons8.com/material-outlined/50/000000/camera--v1.png"
@@ -76,18 +146,20 @@
         </div>
         <div>
             <div v-if="isCameraOpen2" class="camera-canvas">
-                <video v-show="!isPhotoTaken2" ref="camera" :width="canvasWidth" :height="canvasHeight" autoplay></video>
+                <video v-show="!isPhotoTaken2"  ref="camera" :width="canvasWidth" :height="canvasHeight" playsinline autoplay></video>
                 <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
          </div>
        </div>
       </b-form-group>
 
-      <b-button :disabled="habilitaBoton" type="submit" @submit="postRespuesta" variant="primary">Validar</b-button>
-      <b-button :disabled="habilitaBoton4" type="reiniciar" @click="onResetCamIdentificacion"  variant="danger">Reiniciar</b-button>
+      <button :disabled="habilitaBoton" class="btn btn mr-2 button_color" type="submit" @submit="postRespuesta" variant="primary">Validar</button>
+      <button :disabled="habilitaBoton4" class="btn btn mr-2 button_color_red" type="reiniciar" @click="onResetCamIdentificacion"  variant="danger">Reiniciar</button>
     </b-form>
-
+    </div>
+    <div>
     <b-form @submit="onSubmit" v-if="match" >
+      <div v-if="mostrarFormDatPers">
       <div class="form-header">       <!-- form header Datos personales -->    
         <h3><i class="fa fa-user"></i> Datos personales </h3>
       </div>
@@ -136,6 +208,10 @@
         <b-form-invalid-feedback id="input-1-live-feedback">Debes elegir una opción.</b-form-invalid-feedback>
       </b-form-group>
 
+      <button variant="success" class="btn btn mr-2 button_color"  @click="openDatosContact(); closeDatosPers();">Continuar</button>
+    </div>
+
+      <div v-if="mostrarFormDatCont">
       <div class="form-header">         <!-- form header Datos de contacto -->   
         <h3><i class="fa fa-user"></i> Datos de contacto </h3>
       </div>
@@ -190,12 +266,30 @@
         ></b-form-input>
         <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe ser una dirección de correo electronico valida.</b-form-invalid-feedback>
       </b-form-group>
-
-      <b-button :disabled="habilitaBoton2" type="submit" @submit="onSubmit" variant="primary">Guardar</b-button>    </b-form>
+            <button :disabled="habilitaBoton2" class="btn btn mr-2 button_color" type="submit" @submit="onSubmit" variant="primary">Guardar</button>
+          </div>
+      </b-form>
   </div>
-      
     </div>
-  </div><!-- ends header-->
+  </div>
+   <!-- MOSTRAMOS QR DE EXITO-->
+  <div v-if="insert">
+    <div class="container my-6">
+      <div class="card">
+              <div class="card-header">Información</div>
+              <div class="card-body">
+                  <div class="form-group">
+                      <h6>Tu registro fue exitoso, favor de mostrar este QR al entrar:</h6>
+                      <p>{{this.url_visitante_id}}</p>
+                      <img :src="'data:image/jpeg;base64,'+img_data">
+                  </div>
+                  <div class="form-group my-4" style="text-align: right;">
+                      <b-button variant="info" @click="closeModalQR(); openInicio();">Aceptar</b-button>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
 
         <modal 
           name="modal-camaras" 
@@ -212,35 +306,12 @@
                   </div>
 
                   <div class="form-group my-4" style="text-align: right;">
-                      <b-button variant="info" @click="closeModalCamaras">Aceptar</b-button>
+                      <b-button variant="info" @click="closeModalCamaras(); condition();">Aceptar</b-button>
                   </div>
               </div>
           </div>
         </modal><!-- ends modal-->
         
-      <b-modal scrollable
-          ref="my-modal"
-          name="modal-exito" 
-          hide-footer
-          hide-header
-          :reset="true"
-          :width= auto
-          :height= auto
-          >
-          <div class="card">
-              <div class="card-header">Información</div>
-              <div class="card-body">
-                  <div class="form-group">
-                      <h6>Tu registro fue exitoso, favor de mostrar este QR al entrar:</h6>
-                      <p>{{this.url_visitante_id}}</p>
-                      <img :src="'data:image/jpeg;base64,'+img_data">
-                  </div>
-                  <div class="form-group my-4" style="text-align: right;">
-                      <b-button variant="info" @click="closeModalExito">Aceptar</b-button>
-                  </div>
-              </div>
-          </div>
-        </b-modal><!-- ends modal-->
 
         <modal 
           name="modal-fallo" 
@@ -280,6 +351,9 @@
     },
     data() {
       return {
+        idvisita: '',
+        infovisitante: '',
+        imagen: this.$refs.imagenrostro,
         generos: [{ text: 'Seleccionar', value: null }, 'Masculino', 'Femenino'],
         isCameraOpen: false,
         isCameraOpen2: false,
@@ -289,13 +363,17 @@
         match: '',
         mostrarForm: true,
         mostrarForm1: '',
+        formRegRapido: '',
         mostrarCamaras: true,
         mostrarCamaraRostro: true,
+        mostrarFormDatPers: true,
+        mostrarFormDatCont: false,
+        mostrarDatosCorreo: false,
         mensaje: '',
         uuid_visitante: '',
         ruta_imagen_rostro: '',
         ruta_imagen_identificacion: '',
-        insert: true,
+        insert: false,
         id_detalle_visita_aux: 0,
         url_visitante: 'http://localhost:5000/api/visitas-ingreso/',
         url_visitante_id: "",
@@ -313,7 +391,7 @@
           telefono_celular: null,
           numero_emergencia: null,
           nombre_contacto_emergencia: '',
-          email: '',
+          email: this.idvisita,
           genero: null
         },
         
@@ -407,11 +485,6 @@
       },
       closeModalCamaras(){
         this.$modal.hide('modal-camaras');
-      },
-      closeModalExito(){
-        //this.$refs['my-modal'].hide();
-        router.push({'name':'ConfirmaRegistro'});
-        //this.$modal.hide('modal-exito');
       },
       closeModalFallo(){
         this.$modal.hide('modal-fallo');
@@ -517,6 +590,23 @@
         axios.post('http://127.0.0.1:5000/visitantes/visita', this.form).then(response => {
           this.uuid_visitante = response.data.uuid_visitante;
           this.url_visitante_id = this.url_visitante+response.data.id_visita;
+          this.insert= response.data.insert;
+          this.getQR (this.url_visitante_id)
+          this.$refs['my-modal'].show();
+          console.log(response.data);
+          this.$v.form.$touch();
+        }).catch(error => {
+          this.msgErr = error;
+        }).finally(
+          () => this.loading = false
+        );
+      },
+      onSubmitFast() {
+        console.log(this.infovisitante);
+        axios.post('http://127.0.0.1:5000/visitantes/visita', this.infovisitante).then(response => {
+          this.uuid_visitante = response.data.uuid_visitante;
+          this.url_visitante_id = this.url_visitante+response.data.id_visita;
+          this.insert = response.data.insert
           this.getQR (this.url_visitante_id)
           this.$refs['my-modal'].show();
           console.log(response.data);
@@ -533,6 +623,21 @@
           () => this.loading = false
         );
       },
+      buscaInfoPrevia() {
+        if(this.idvisita){
+      axios.get('http://localhost:5000/api/visitas-ingreso/' + this.idvisita, {
+      }).then((response =>{
+        this.infovisitante = response.data
+        console.log("VIENDO INFORMACION COMPLETA DEL VISITANTE = " + this.infovisitante.id_visita)
+        console.log(this.infovisitante)
+        this.closeInicio();
+      }))
+        }
+        else{
+        console.log("NO ENCONTTRE NADA");
+        }
+      //this.$refs['my-modal'].show();
+    },
       getQR (mensaje) {
       const path = 'http://localhost:5000/imagen_QR'
       const data = { "datos_para_qr": mensaje }
@@ -576,20 +681,58 @@
       openRegistro(){
       this.mostrarForm1 = true;
       },
-      closeInicio(){
-      this.mostrarForm = false;
+     closeInicio(){
+      if(this.idvisitante != undefined){
+        this.mostrarDatosCorreo = true;
+        this.mostrarForm = false;
+      }else{
+        this.mostrarForm1 = true;
+        this.mostrarForm = false;
+      }
       },
-      openSearchReg(){
-        //this.$refs['my-modal'].hide();
-        router.push({'name':'ConsultaRegistro'});
-        //this.$modal.hide('modal-exito');
+      openInicio(){
+      this.mostrarForm = true;
+      },
+      openDatosContact(){
+      this.mostrarFormDatCont = true;
+      },
+      closeDatosPers(){
+      this.mostrarFormDatPers = false;
+      },
+      openRegRapido(){
+      this.formRegRapido = true;
+      },
+      claseRegRapido(){
+      this.formRegRapido = false;
+      },
+      closeModalQR(){
+      this.insert = false
+      },
+    closeDatosCorreo(){
+      this.mostrarDatosCorreo = false
+      },
+    openDatosCorreo(){
+      if(this.infovisitante != null){
+        this.mostrarDatosCorreo = true      
+        }
       },
     }
-      
   }
 </script>
 
 <style scoped>
+.inf_visit>tr>td:first-child{
+min-width: 300px;
+}
+.overflow-clip {
+  text-overflow: clip;
+}
+.button_color{
+  color: rgb(49, 143, 5);
+}
+.button_color_red{
+  color: rgb(209, 14, 8);
+}
 video {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);

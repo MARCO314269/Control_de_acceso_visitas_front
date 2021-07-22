@@ -375,6 +375,7 @@ export default {
             console.log("recibiendo informacion en tiempo real");
             console.log(response.data)
             this.resultadoFinal = response.data;
+            console.log(this.resultadoFinal)
           })
           .catch((error) => {
             console.log(error.response.data);
