@@ -9,10 +9,9 @@
          <br>
             <div class="row">
                 <div class="form-inline">
-                    <label for="idvisita" class="col-form-label mr-4">Correo electronico:</label>
+                    <!-- <label for="idvisita" class="col-form-label mr-4">Correo electronico:</label> -->
                     <input type="text" required class="form-control mr-4"  placeholder="ejemplo@gmail.com" v-model="email">
                     <!--small class="notValid">{{msgName}}</small-->
-
                     <button type="button" @click="buscaInfoPrevia()" class="btn btn mr-2 button_color">
                         <i class="fa fa-search fa-fw" aria-hidden="true"></i> Buscar</button>
                 </div>
@@ -633,6 +632,12 @@
         console.log(this.infovisitante)
         this.closeInicio();
       }))
+      .catch(
+        (error) => {
+        console.log(error)
+        alert(error)
+      }
+      )
         }
         else{
         console.log("NO ENCONTTRE NADA");
