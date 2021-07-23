@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="form-inline">
                     <label for="idvisita" class="col-form-label mr-4">Correo electronico:</label>
-                    <input type="text" required class="form-control mr-4"  placeholder="ejemplo@gmail.com" v-model="idvisita">
+                    <input type="text" required class="form-control mr-4"  placeholder="ejemplo@gmail.com" v-model="email">
                     <!--small class="notValid">{{msgName}}</small-->
 
                     <button type="button" @click="buscaInfoPrevia()" class="btn btn mr-2 button_color">
@@ -283,9 +283,6 @@
                       <p>{{this.url_visitante_id}}</p>
                       <img :src="'data:image/jpeg;base64,'+img_data">
                   </div>
-                  <div class="form-group my-4" style="text-align: right;">
-                      <b-button variant="info" @click="closeModalQR(); openInicio();">Aceptar</b-button>
-                  </div>
               </div>
           </div>
        </div>
@@ -351,6 +348,7 @@
     },
     data() {
       return {
+        email:'',
         idvisita: '',
         infovisitante: '',
         imagen: this.$refs.imagenrostro,
@@ -602,8 +600,11 @@
         );
       },
       onSubmitFast() {
-        console.log(this.infovisitante);
-        axios.post('http://127.0.0.1:5000/visitantes/visita', this.infovisitante).then(response => {
+        this.form.id_detalle_visita = this.$route.params.id_detalle_visita
+        this.form.uuid_visitante = this.infovisitante.uuid_visitante
+        this.form.email = this.infovisitante.email
+        console.log(this.form);
+        axios.post('http://127.0.0.1:5000/visitantes/visita-rapida', this.form).then(response => {
           this.uuid_visitante = response.data.uuid_visitante;
           this.url_visitante_id = this.url_visitante+response.data.id_visita;
           this.insert = response.data.insert
@@ -624,8 +625,8 @@
         );
       },
       buscaInfoPrevia() {
-        if(this.idvisita){
-      axios.get('http://localhost:5000/api/visitas-ingreso/' + this.idvisita, {
+        if(this.email){
+      axios.post('http://localhost:5000/visitantes/correo', {"email": this.email}, {
       }).then((response =>{
         this.infovisitante = response.data
         console.log("VIENDO INFORMACION COMPLETA DEL VISITANTE = " + this.infovisitante.id_visita)
@@ -682,7 +683,7 @@
       this.mostrarForm1 = true;
       },
      closeInicio(){
-      if(this.idvisitante != undefined){
+      if(this.infovisitante.id_visitante){
         this.mostrarDatosCorreo = true;
         this.mostrarForm = false;
       }else{
@@ -728,7 +729,7 @@ min-width: 300px;
   text-overflow: clip;
 }
 .button_color{
-  color: rgb(49, 143, 5);
+  color: #27ae60;
 }
 .button_color_red{
   color: rgb(209, 14, 8);
