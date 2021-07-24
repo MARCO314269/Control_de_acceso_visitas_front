@@ -647,6 +647,12 @@
         console.log(this.infovisitante)
         this.closeInicio();
       }))
+      .catch(
+        (error) => {
+        console.log(error)
+        alert(error)
+      }
+      )
         }
         else{
         console.log("NO ENCONTTRE NADA");
