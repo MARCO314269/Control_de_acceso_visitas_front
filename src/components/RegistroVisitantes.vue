@@ -2,20 +2,22 @@
 <div class="container my-6" >
   <!-- INICIO DE PROCESOS-->
    <div class="card-header" v-if="mostrarForm">
-         <label class="control-label h1">Bienvenido</label>
-         <h5>Aqui inicia el proceso de registro para tu visita</h5>
-         <h5>Por favor introduce tu correo electronico:</h5>
+         <h1>Bienvenido</h1>
+         <h4>Aqui inicia el proceso de registro para tu visita a "{{this.nombre_visita}}" </h4>
+         <h4>que se llevara a cabo del {{this.fecha_inicio}} al {{this.fecha_fin}}</h4>
          <br>
          <br>
             <div class="row">
-                <div class="form-inline">
                     <label for="idvisita" class="col-form-label mr-4">Correo electronico:</label>
-                    <input type="text" required class="form-control mr-4"  placeholder="ejemplo@gmail.com" v-model="email">
+                            <b-form-input
+                                v-model="$v.form3.email.$model"
+                                placeholder="ejemplo@gmail.com"
+                                :state="validateState2('email')"
+                                ></b-form-input>
+                                <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe ser una dirección de correo electronico valida.</b-form-invalid-feedback>
                     <!--small class="notValid">{{msgName}}</small-->
-
-                    <button type="button" @click="buscaInfoPrevia()" class="btn btn mr-2 button_color">
-                        <i class="fa fa-search fa-fw" aria-hidden="true"></i> Buscar</button>
-                </div>
+                    <button :disabled="habilitaBoton5" type="button" @click="buscaInfoPrevia()" class="btn btn mr-2 button_color">
+                        <i aria-hidden="true"></i> Continuar</button>           
               </div>
             </div> <!-- end row -->
 
@@ -68,7 +70,7 @@
 
                   <br>
                     <button class="btn btn mr-2 button_color" @click="onSubmitFast(); closeDatosCorreo();">Registrar visita</button>
-                    <button class="btn btn mr-2 button_color_red"  @click="openRegistro(); closeDatosCorreo();">¿No eres tu?</button>
+                    <button class="btn btn mr-2 button_color_red"  @click="openInicio(); closeDatosCorreo(); resetForm3();">¿No eres tu?</button>
               </div>
         </div>
   <!-- AQUI COMIENZA PROCESO DE REGISTRO-->
@@ -83,6 +85,8 @@
                 <h5>Se debe tomar una fotografía de frente y una imagen de su identificación.</h5>
                 <h5>El lugar debe estar bien iluminado y se debe revisar que los datos de la identificación sean legibles en la imagen.</h5>
             </div>
+            <br>
+            <h5>FAVOR DE CAPTURAR UNA IMAGEN DE TU ROSTRO.</h5>
         <div style="display: flex; justify-content: flex-start;">
             <img style="height: 100px;" v-if="isCameraOpen" src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png" @click="capture"/>
             <div class="camera-button">
@@ -90,9 +94,6 @@
                 <div v-show="!isCameraOpen">
                 <h6>ROSTRO</h6>
                 </div>
-                <div>
-                  {{this.imagen}}
-                  </div>
                 <div>
                  <span v-if="!isCameraOpen"><img style="height: 100px;" class="button-img"
                                 src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"></span>
@@ -108,7 +109,7 @@
                 <canvas v-show="true" id="photoTaken" ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
             </div>
             <br>
-              <button :disabled="habilitaBoton3" class="btn btn mr-2 button_color" @click="mostrarCamaraRostro = !mostrarCamaraRostro">Continuar</button>
+              <button :disabled="habilitaBoton3" class="btn btn mr-2 button_color" @click="mostrarCamaraRostro = !mostrarCamaraRostro; toggleCamera2();">Continuar</button>
               <button :disabled="habilitaBoton3" class="btn btn mr-2 button_color_red" @click="onResetCamRostro" variant="danger">Reiniciar</button>
         </div>
         </b-form-group>
@@ -117,12 +118,8 @@
      <b-form @submit="postRespuesta" v-if="condition2"> 
         <b-form-group>
         <div class="camera-box">
-            <div class="card-header" >
-                <label class="control-label h1">Registro de Visitantes</label>
-                <h5>Para dar de alta a un visitante se requiere verificar su identidad.</h5>
-                <h5>Se debe tomar una fotografía de frente y una imagen de su identificación.</h5>
-                <h5>El lugar debe estar bien iluminado y se debe revisar que los datos de la identificación sean legibles en la imagen.</h5>
-            </div>
+            <br>
+                <h5>FAVOR DE CAPTURAR UNA IMAGEN DE TU IDENTIFICACIÓN.</h5>
         <div style="display: flex; justify-content: flex-start;">
             <img style="height: 100px;" v-if="isCameraOpen2"
                  src="https://img.icons8.com/material-outlined/50/000000/camera--v1.png"
@@ -255,23 +252,12 @@
         ></b-form-input>
         <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio, no debe contener numeros y debe contener al menos 3 letras.</b-form-invalid-feedback>
       </b-form-group>
-
-      <b-form-group id="input-group-9" label="Correo electronico:" label-for="input-9">
-      <b-form-input
-          id="input-9"
-          v-model="$v.form.email.$model"
-          :state="validateState('email')"
-          type="email"
-          placeholder="Ingresa tu correo electronico"
-        ></b-form-input>
-        <b-form-invalid-feedback id="input-1-live-feedback">Este es un campo obligatorio y debe ser una dirección de correo electronico valida.</b-form-invalid-feedback>
-      </b-form-group>
             <button :disabled="habilitaBoton2" class="btn btn mr-2 button_color" type="submit" @submit="onSubmit" variant="primary">Guardar</button>
           </div>
       </b-form>
   </div>
     </div>
-  </div>
+  </div> 
    <!-- MOSTRAMOS QR DE EXITO-->
   <div v-if="insert">
     <div class="container my-6">
@@ -348,6 +334,9 @@
     },
     data() {
       return {
+        nombre_visita: '',
+        fecha_inicio: '',
+        fecha_fin: '',
         email:'',
         idvisita: '',
         infovisitante: '',
@@ -389,13 +378,16 @@
           telefono_celular: null,
           numero_emergencia: null,
           nombre_contacto_emergencia: '',
-          email: this.idvisita,
-          genero: null
+          genero: null,
+          email: '',
         },
         
         form2:{
           rostro_b64: '',
           identificacion_b64: ''
+        },
+        form3:{
+          email: '',
         }
      }
     },
@@ -409,10 +401,11 @@
       telefono_particular: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
       numero_emergencia: { required, integer, maxLength: maxLength(10), minLength: minLength(10) },
       nombre_contacto_emergencia: { required, minLength: minLength(3) },
-      email: { required, email },
-      
-    }
-  },
+    },
+    form3: {
+    email: { required, email }, 
+  }
+    },
     computed: {
       habilitaBoton: function() {
         var dato = true
@@ -429,7 +422,6 @@
           && this.form.telefono_particular && this.form.telefono_particular.length==10
           && this.form.numero_emergencia && this.form.numero_emergencia.length==10
           && this.form.nombre_contacto_emergencia && this.form.nombre_contacto_emergencia.length>3
-          && this.form.email && emaiRegex.test(this.form.email)
           return !dato;
       },
       habilitaBoton3: function() {
@@ -442,6 +434,11 @@
           && this.form2.identificacion_b64
           return !dato;
       },
+      habilitaBoton5: function() {
+        var dato = true
+         && this.form3.email && emaiRegex.test(this.form3.email)
+          return !dato;
+      },
       condition() {
         this.mostrarCamaras;
         this.mostrarCamaraRostro
@@ -452,9 +449,16 @@
         return this.mostrarCamaras == true && this.mostrarCamaraRostro == false;
       },
     },
+    created(){
+      this.obetenerinfoVisita()
+    },
     methods: {
       validateState(nombre) {
        const { $dirty, $error } = this.$v.form[nombre];
+       return $dirty ? !$error : null;
+      },
+      validateState2(email) {
+       const { $dirty, $error } = this.$v.form3[email];
        return $dirty ? !$error : null;
       },
       postRespuesta(event) {
@@ -481,6 +485,15 @@
           () => this.loading = false
         );
       },
+      obetenerinfoVisita(){
+        axios.get('http://127.0.0.1:5000/detalle-visita/' +this.$route.params.id_detalle_visita, {
+        }).then((response =>{
+        this.nombre_visita = response.data.nombre_visita
+        this.fecha_inicio =response.data.fecha_inicio
+        this.fecha_fin = response.data.fecha_fin
+        console.log(this.evento)
+       }
+       ))},
       closeModalCamaras(){
         this.$modal.hide('modal-camaras');
       },
@@ -580,6 +593,7 @@
       },
       onSubmit(event) {
         event.preventDefault()
+        this.form.email=this.form3.email
         this.form.uuid_visitante=this.uuid_visitante;
         this.form.ruta_imagen_rostro=this.ruta_imagen_rostro;
         this.form.ruta_imagen_identificacion=this.ruta_imagen_identificacion;
@@ -625,8 +639,8 @@
         );
       },
       buscaInfoPrevia() {
-        if(this.email){
-      axios.post('http://localhost:5000/visitantes/correo', {"email": this.email}, {
+        if(this.form3.email){
+      axios.post('http://localhost:5000/visitantes/correo', this.form3, {
       }).then((response =>{
         this.infovisitante = response.data
         console.log("VIENDO INFORMACION COMPLETA DEL VISITANTE = " + this.infovisitante.id_visita)
@@ -663,6 +677,11 @@
         email: ''
         }
       },
+      resetForm3(){
+        this.form3 = {
+        email: ''
+        }
+      },
       onResetCamRostro(){
         this.isPhotoTaken = !this.isPhotoTaken;
         this.form2.rostro_b64 = null;
@@ -689,6 +708,7 @@
       }else{
         this.mostrarForm1 = true;
         this.mostrarForm = false;
+        this.toggleCamera();
       }
       },
       openInicio(){
@@ -738,4 +758,10 @@ video {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
 }
+</style>
+<style type='text/css'>
+    h1, h2, h3, h4, h5, h6 {
+    font-family: sans-serif;
+    color: rgb(2, 68, 27);
+    }
 </style>
