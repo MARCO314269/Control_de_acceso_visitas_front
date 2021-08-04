@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import "bootstrap/dist/css/bootstrap.min.css"
@@ -25,6 +28,7 @@ import VueCountdownTimer from 'vuejs-countdown-timer';
 
 /*Vue.config.productionTip = false*/
 
+Vue.use(VueMaterial)
 Vue.use(VModal)
 Vue.use(VueRouter, router)
 Vue.use(BootstrapVue)

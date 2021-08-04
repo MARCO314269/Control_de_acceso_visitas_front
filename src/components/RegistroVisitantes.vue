@@ -114,8 +114,16 @@
     <!-- AQUI COMIENZA PROCESO DE REGISTRO-->
     <div>
       <div class="card" v-if="mostrarForm1">
-        <div class="container my-4">
-          <b-form v-if="condition && !match">
+          <div class="container my-4">
+  <form-wizard title="" subtitle="" 
+              color="#27ae60"
+              nextButtonText="SIGUIENTE"
+              backButtonText="ATRAS" 
+              finishButtonText="GUARDAR" 
+              :selected="true" 
+              @on-complete="onComplete">
+    <tab-content title="Rostro" :before-change="validateTabUno">
+         <b-form>
             <b-form-group>
               <div class="card-header">
                 <label class="control-label h1">Registro de Visitantes</label>
@@ -161,12 +169,6 @@
                           class="button-img"
                           src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"
                       /></span>
-                      <span v-else
-                        ><img
-                          style="height: 100px"
-                          class="button-img"
-                          src="https://img.icons8.com/material-outlined/50/000000/cancel.png"
-                      /></span>
                     </div>
                   </button>
                 </div>
@@ -174,45 +176,39 @@
               <div>
                 <div v-if="isCameraOpen" class="camera-canvas">
                   <video
-                    v-show="!isPhotoTaken"
+                    v-show="true"
                     ref="camera"
                     :width="canvasWidth"
                     :height="canvasHeight"
                     playsinline
                     autoplay
                   ></video>
+                <div>
+                  <br>
+                </div>
                   <canvas
-                    v-show="true"
+                    v-show="isPhotoTaken"
                     id="photoTaken"
                     ref="canvas"
-                    :width="canvasWidth"
-                    :height="canvasHeight"
+                    :width="canvasWidthFoto"
+                    :height="canvasHeightFoto"
                   ></canvas>
                 </div>
-                <br />
-                <button
-                  :disabled="habilitaBoton3"
-                  class="btn btn mr-2 button_color"
-                  @click="
-                    mostrarCamaraRostro = !mostrarCamaraRostro;
-                    toggleCamera2();
-                  "
-                >
-                  Continuar
-                </button>
-                <button
+                <button v-if="primerpaso"
                   :disabled="habilitaBoton3"
                   class="btn btn mr-2 button_color_red"
                   @click="onResetCamRostro"
                   variant="danger"
                 >
-                  Reiniciar
+                  Tomar otra fotografia
                 </button>
               </div>
             </b-form-group>
           </b-form>
+    </tab-content>
 
-          <b-form @submit="postRespuesta" v-if="condition2">
+    <tab-content  title="Identificacion" :before-change="validateTabDos">
+          <b-form @submit="postRespuesta">
             <b-form-group>
               <div class="camera-box">
                 <br />
@@ -259,54 +255,42 @@
                 <div>
                   <div v-if="isCameraOpen2" class="camera-canvas">
                     <video
-                      v-show="!isPhotoTaken2"
+                      v-show="true"
                       ref="camera"
                       :width="canvasWidth"
                       :height="canvasHeight"
                       playsinline
                       autoplay
                     ></video>
+                  <div>
+                    <br>
+                  </div>
                     <canvas
-                      v-show="true"
+                      v-show="isPhotoTaken2"
                       id="photoTaken"
                       ref="canvas"
-                      :width="canvasWidth"
-                      :height="canvasHeight"
+                      :width="canvasWidthFoto"
+                      :height="canvasHeightFoto"
                     ></canvas>
                   </div>
                 </div>
               </div>
             </b-form-group>
 
-            <button
-              :disabled="habilitaBoton"
-              class="btn btn mr-2 button_color"
-              type="submit"
-              @submit="postRespuesta"
-              variant="primary"
-            >
-              Validar
-            </button>
-            <button
+            <button v-if="segundopaso"
               :disabled="habilitaBoton4"
               class="btn btn mr-2 button_color_red"
               type="reiniciar"
               @click="onResetCamIdentificacion"
               variant="danger"
             >
-              Reiniciar
+              Tomar otra fotografia
             </button>
           </b-form>
-        </div>
-        <div>
-          <b-form @submit="onSubmit" v-if="match">
-            <div v-if="mostrarFormDatPers">
-              <div class="form-header">
-                <!-- form header Datos personales -->
-                <h3><i class="fa fa-user"></i> Datos personales</h3>
-              </div>
-
-              <b-form-group
+    </tab-content>
+        <tab-content title="About You" :before-change="validateTabTres">
+              <div class="form-group">
+                 <b-form-group
                 id="input-group-1"
                 label="Nombre(s):"
                 :class="className"
@@ -325,7 +309,6 @@
                   contener al menos 3 letras.</b-form-invalid-feedback
                 >
               </b-form-group>
-
               <b-form-group
                 id="input-group-2"
                 label="Apellido Paterno:"
@@ -376,32 +359,18 @@
                   >Debes elegir una opción.</b-form-invalid-feedback
                 >
               </b-form-group>
-
-              <button
-                variant="success"
-                class="btn btn mr-2 button_color"
-                @click="
-                  openDatosContact();
-                  closeDatosPers();
-                "
-              >
-                Continuar
-              </button>
-            </div>
-
-            <div v-if="mostrarFormDatCont">
-              <div class="form-header">
-                <!-- form header Datos de contacto -->
-                <h3><i class="fa fa-user"></i> Datos de contacto</h3>
               </div>
-
-              <b-form-group
+    </tab-content>
+    <tab-content>
+    <div class="form-group">
+      <b-form-group
                 id="input-group-5"
                 label="Telefono celular:"
                 label-for="input-5"
               >
                 <b-form-input
                   id="input-5"
+                  type="tel"
                   v-model="$v.form.telefono_celular.$model"
                   :state="validateState('telefono_celular')"
                   placeholder="Ingresa tu telefono celular"
@@ -462,18 +431,10 @@
                   contener al menos 3 letras.</b-form-invalid-feedback
                 >
               </b-form-group>
-              <button
-                :disabled="habilitaBoton2"
-                class="btn btn mr-2 button_color"
-                type="submit"
-                @submit="onSubmit"
-                variant="primary"
-              >
-                Guardar
-              </button>
-            </div>
-          </b-form>
         </div>
+    </tab-content>
+  </form-wizard>
+</div>
       </div>
     </div>
     <!-- MOSTRAMOS QR DE EXITO-->
@@ -490,34 +451,6 @@
       </div>
     </div>
 
-    <modal
-      name="modal-camaras"
-      :clickToClose="false"
-      :reset="true"
-      :width="480"
-      :height="245"
-    >
-      <div class="card">
-        <div class="card-header">Información</div>
-        <div class="card-body">
-          <div class="form-group">
-            <h6>El sistema detecta lo siguiente:</h6>
-            <p>{{ this.mensaje }}</p>
-          </div>
-
-          <div class="form-group my-4" style="text-align: right">
-            <b-button
-              variant="info"
-              @click="
-                closeModalCamaras();
-                condition();
-              "
-              >Aceptar</b-button
-            >
-          </div>
-        </div>
-      </div> </modal
-    ><!-- ends modal-->
 
     <modal
       name="modal-fallo"
@@ -545,12 +478,38 @@
         </div>
       </div> </modal
     ><!-- ends modal-->
+
+  <modal
+      name="modal-pasos"
+      :clickToClose="false"
+      :reset="true"
+      :width="480"
+      :height="245"
+    >
+        <div class="card-header">Información</div>
+        <div class="card-body">
+          <div class="form-group">
+            <h6>
+              {{mensajemodal}}
+            </h6>
+          </div>
+          <div class="form-group my-4" style="text-align: right">
+            <b-button
+              variant="info"
+              @click="closeModalPasos"
+              >Aceptar</b-button
+            >
+          </div>
+        </div>
+ </modal><!-- ends modal-->
   </div>
 </template>
 
 
 
 <script>
+import {FormWizard, TabContent} from 'vue-form-wizard'
+import "vue-step-wizard/dist/vue-step-wizard.css";
 import router from "../router";
 import axios from "axios";
 import "vue-range-slider/dist/vue-range-slider.css";
@@ -567,10 +526,16 @@ const emaiRegex = new RegExp(
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 );
 export default {
+  name: "StepFormValidation",
   mixins: [validationMixin],
-  components: {},
-  data() {
+  components: {
+    FormWizard,
+    TabContent
+  },
+   data() {
     return {
+      mensajemodal: "",
+      animate: true,
       nombre_visita: "",
       fecha_inicio: "",
       fecha_fin: "",
@@ -581,8 +546,10 @@ export default {
       generos: [{ text: "Seleccionar", value: null }, "Masculino", "Femenino"],
       isCameraOpen: false,
       isCameraOpen2: false,
-      canvasHeight: 470,
-      canvasWidth: 470,
+      canvasHeightVideo: 470,
+      canvasWidthVideo: 470,
+      canvasHeightFoto: 250,
+      canvasWidthFoto: 250,
       items: null,
       match: "",
       mostrarForm: true,
@@ -605,6 +572,8 @@ export default {
       auto: 0,
       isPhotoTaken: false,
       isPhotoTaken2: false,
+      primerpaso: false,
+      segundopaso: false,
       form: {
         id_detalle_visita: this.$route.params.id_detalle_visita,
         uuid_visitante: "",
@@ -618,7 +587,6 @@ export default {
         genero: null,
         email: "",
       },
-
       form2: {
         rostro_b64: "",
         identificacion_b64: "",
@@ -628,7 +596,7 @@ export default {
       },
     };
   },
-  validations: {
+    validations: {
     form: {
       nombre: { required, minLength: minLength(3) },
       apellido_paterno: { required, alpha, minLength: minLength(3) },
@@ -657,6 +625,18 @@ export default {
     form3: {
       email: { required, email },
     },
+  },
+  watch: {
+      telefono_celular(){
+        var x = this.tel.replace(/\D/g, '').match(/(\d{0,2})(\d{0,4})(\d{0,4})/);
+        this.form.telefono_celular = !x[2] && !x[3] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        this.msgTel="";
+        this.classTel="greenColor correct";
+        if(this.form.telefono_celular.length!=14) {  // mejor poner aqui una expresion regular
+          this.msgTel="El teléfono es incorrecto. Recuerda que te enviaremos un sms de confirmación para completar el registro.";
+          this.classTel="redColor incorrect";
+        }
+      }
   },
   computed: {
     habilitaBoton: function () {
@@ -694,6 +674,18 @@ export default {
       var dato = true && this.form3.email && emaiRegex.test(this.form3.email);
       return !dato;
     },
+    habilitaBoton6: function () {
+      var dato =
+        true &&
+        this.form.nombre &&
+        this.form.nombre.length > 3 &&
+        this.form.apellido_paterno &&
+        this.form.apellido_paterno.length > 3 &&
+        this.form.apellido_materno &&
+        this.form.apellido_materno.length > 3 &&
+        this.form.genero
+        return !dato;
+    },
     condition() {
       this.mostrarCamaras;
       this.mostrarCamaraRostro;
@@ -716,9 +708,8 @@ export default {
       const { $dirty, $error } = this.$v.form3[email];
       return $dirty ? !$error : null;
     },
-    postRespuesta(event) {
-      event.preventDefault();
-      axios
+    async postRespuesta() {
+      await axios 
         .post(
           "http://127.0.0.1:5000/validacion-rostro-identificacion",
           this.form2
@@ -727,8 +718,7 @@ export default {
           console.log(response.data);
           this.uuid_visitante = response.data.uuid_visitante;
           this.ruta_imagen_rostro = response.data.ruta_imagen_rostro;
-          this.ruta_imagen_identificacion =
-            response.data.ruta_imagen_identificacion;
+          this.ruta_imagen_identificacion = response.data.ruta_imagen_identificacion;
           this.mensaje = response.data.mensaje;
           this.match = response.data.match;
           this.mostrarCamaras = !this.match;
@@ -766,6 +756,9 @@ export default {
     },
     closeModalFallo() {
       this.$modal.hide("modal-fallo");
+    },
+    closeModalPasos() {
+      this.$modal.hide("modal-pasos");
     },
     toggleCamera() {
       if (this.isCameraOpen) {
@@ -806,14 +799,15 @@ export default {
           self.$refs.camera,
           0,
           0,
-          self.canvasWidth,
-          self.canvasHeight
+          self.canvasWidthFoto,
+          self.canvasHeightFoto
         );
         const dataUrl = self.$refs.canvas
           .toDataURL()
           .replace("data:image/png;base64,", "");
         console.log(dataUrl);
         this.form2.rostro_b64 = dataUrl;
+        this.primerpaso = true;
         self.addToPhotoGallery(dataUrl);
         self.isCameraOpen = false;
         self.stopCameraStream();
@@ -861,21 +855,21 @@ export default {
           self.$refs.camera,
           0,
           0,
-          self.canvasWidth,
-          self.canvasHeight
+          self.canvasWidthFoto,
+          self.canvasHeightFoto
         );
         const dataUrl = self.$refs.canvas
           .toDataURL()
           .replace("data:image/png;base64,", "");
         console.log(dataUrl);
         this.form2.identificacion_b64 = dataUrl;
+        this.segundopaso = true;
         self.addToPhotoGallery(dataUrl);
         self.isCameraOpen = false;
         self.stopCameraStream();
       }, FLASH_TIMEOUT);
     },
-    onSubmit(event) {
-      event.preventDefault();
+    onSubmit() {
       this.form.email = this.form3.email;
       this.form.uuid_visitante = this.uuid_visitante;
       this.form.ruta_imagen_rostro = this.ruta_imagen_rostro;
@@ -1032,7 +1026,70 @@ export default {
         this.mostrarDatosCorreo = true;
       }
     },
-  },
+   regresarInicio() {
+     this.openInicio();
+     this.mostrarForm1 = false;
+    },
+    onComplete(){
+    this.onSubmit();
+    this.mostrarForm1 = false;
+    },
+   validateTabUno: function(){
+     if(this.primerpaso == true){
+       return true
+     }else
+     this.mensajemodal = "Por favr toma una fotografia de tu Rostro para poder continuar" 
+     this.$modal.show("modal-pasos");
+     return false;
+   },
+  validateTabDos: async function(){
+     if(this.segundopaso == true){
+     await this.postRespuesta();
+     if(this.match == true ){
+       this.mensajemodal = this.mensaje;
+       this.$modal.show("modal-pasos");
+       return true
+     }else{
+       this.mensajemodal = this.mensaje;
+       this.$modal.show("modal-pasos");
+     }
+     }else 
+     this.mensajemodal = "Por favr toma una fotografia de tu Identificacion para poder continuar"
+      this.$modal.show("modal-pasos");
+     return false;
+   },
+   validateTabTres: function(){
+     if(
+        this.form.nombre &&
+        this.form.nombre.length > 3 &&
+        this.form.apellido_paterno &&
+        this.form.apellido_paterno.length > 3 &&
+        this.form.apellido_materno &&
+        this.form.apellido_materno.length > 3 &&
+        this.form.genero){
+        return true;
+        }else{
+          this.mensajemodal= "Por favor llena todos los campos para poder contiuar"
+          this.$modal.show("modal-pasos");
+        }  
+   },
+      validateTabCuatro: function(){
+     if(
+        this.form.telefono_celular &&
+        this.form.telefono_celular.length == 10 &&
+        this.form.telefono_particular &&
+        this.form.telefono_particular.length == 10 &&
+        this.form.numero_emergencia &&
+        this.form.numero_emergencia.length == 10 &&
+        this.form.nombre_contacto_emergencia &&
+        this.form.nombre_contacto_emergencia.length > 3){
+        return true;
+        }else{
+          this.mensajemodal= "Por favor llena todos los campos para poder contiuar"
+          this.$modal.show("modal-pasos");
+        }  
+   }
+  }
 };
 </script>
 
