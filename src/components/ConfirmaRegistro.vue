@@ -1,42 +1,52 @@
 <template>
-              <div class="card">
-              <div class="card-header">Información</div>
-              <div class="card-body">
-                  <div class="form-group">
-                      <h6>Tu registro fue exitoso, favor de mostrar este QR al entrar:</h6>
-                      <p>{{this.url_visitante_id}}</p>
-                      <img :src="'data:image/jpeg;base64,'+img_data">
-                  </div>
-                  <div class="form-group my-4" style="text-align: right;">
-                  </div>
-              </div>
-          </div>
+  <div id="app">
+<div>
+        <form-wizard @on-complete="onComplete" 
+                      shape="tab"
+                      color="#9b59b6">
+            <tab-content title="Personal details"
+                         icon="ti-user" :before-change="beforeTabSwitch">
+              My first tab content
+            </tab-content>
+            <tab-content title="Additional Info"
+                         icon="ti-settings">
+              My second tab content
+            </tab-content>
+            <tab-content title="Last step"
+                         icon="ti-check">
+              Yuhuuu! This seems pretty damn simple
+            </tab-content>
+        </form-wizard>
+ </div>
+</div>
 </template>
 
-
 <script>
-import axios from 'axios';
+import {FormWizard, TabContent} from 'vue-form-wizard'
+import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 
 export default {
-data(){
-    return{
-   url_visitante_id: "",
-   url_visitante: 'http://localhost:5000/api/visitas-ingreso/',
-   mensaje: ""
-    }
-},
-methods: {
-      getQR (mensaje) {
-      const path = 'http://localhost:5000/imagen_QR'
-      const data = { "datos_para_qr": mensaje }
-      axios.post(path,data).then(response => {
-        this.img_data = response.data.encoded_qr_data
-        console.log(this.img_data)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    }
-}
-}
+  name: "BasicStepperForm",
+  components: {
+    FormWizard,
+    TabContent,
+  },
+  data() {
+    return {
+      fullName: "",
+      companyName: "",
+      referral: "",
+    };
+  },
+  methods: {
+    onComplete: function(){
+      alert('Yay. Done!');
+   },
+   beforeTabSwitch: function(){
+     alert("This is called before switchind tabs")
+     return true;
+   }
+  },
+};
 </script>
+
