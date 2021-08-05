@@ -357,7 +357,7 @@
               </b-form-group>
               </div>
     </tab-content>
-    <tab-content title="Datos de contacto">
+    <tab-content title="Datos de contacto" :before-change="validateTabCuatro">
     <div class="form-group">
       <b-form-group
                 id="input-group-5"
@@ -366,7 +366,7 @@
               >
                 <b-form-input
                   id="input-5"
-                  type="tel"
+                  type="telefono_celular"
                   v-model="$v.form.telefono_celular.$model"
                   :state="validateState('telefono_celular')"
                   placeholder="Ingresa tu telefono celular"
@@ -384,6 +384,7 @@
               >
                 <b-form-input
                   id="input-6"
+                  @input="acceptNumber"
                   v-model="$v.form.telefono_particular.$model"
                   :state="validateState('telefono_particular')"
                   placeholder="Ingresa tu telefono particular"
@@ -629,11 +630,11 @@ export default {
   },
   watch: {
       telefono_celular(){
-        var x = this.tel.replace(/\D/g, '').match(/(\d{0,2})(\d{0,4})(\d{0,4})/);
-        this.form.telefono_celular = !x[2] && !x[3] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        var x = this.$v.form.telefono_celular.replace(/\D/g, '').match(/(\d{0,2})(\d{0,4})(\d{0,4})/);
+        this.$v.form.telefono_celular = !x[2] && !x[3] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
         this.msgTel="";
         this.classTel="greenColor correct";
-        if(this.form.telefono_celular.length!=14) {  // mejor poner aqui una expresion regular
+        if(this.$v.form.telefono_celular.length!=14) {  // mejor poner aqui una expresion regular
           this.msgTel="El teléfono es incorrecto. Recuerda que te enviaremos un sms de confirmación para completar el registro.";
           this.classTel="redColor incorrect";
         }
@@ -673,6 +674,10 @@ export default {
   },
   
   methods: {
+    acceptNumber() {
+        var x = this.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+         this.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+    },
     validateState(nombre) {
       const { $dirty, $error } = this.$v.form[nombre];
       return $dirty ? !$error : null;
@@ -838,8 +843,8 @@ export default {
         this.form2.identificacion_b64 = dataUrl;
         this.segundopaso = true;
         self.addToPhotoGallery(dataUrl);
-        self.isCameraOpen2 = false;
-        self.stopCameraStream2();
+        self.isCameraOpen = false;
+        self.stopCameraStream();
       }, FLASH_TIMEOUT);
     },
     onSubmit() {
@@ -1052,7 +1057,7 @@ export default {
       validateTabCuatro: function(){
      if(
         this.form.telefono_celular &&
-        this.form.telefono_celular.length == 10 &&
+        this.form.telefono_celular.length == 10 && 
         this.form.telefono_particular &&
         this.form.telefono_particular.length == 10 &&
         this.form.numero_emergencia &&
