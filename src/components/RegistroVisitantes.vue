@@ -115,6 +115,21 @@
     <div>
       <div class="card" v-if="mostrarForm1">
           <div class="container my-4">
+            <div class="card-header">
+                <label class="control-label h1">Registro de Visitantes</label>
+                <h6>
+                  Para dar de alta a un visitante se requiere verificar su
+                  identidad.
+                </h6>
+                <!-- <h6>
+                  Se debe tomar una fotografía de frente y una imagen de su
+                  identificación.
+                </h6> -->
+                <h6>
+                  Por favor, revisa que el lugar esté bien iluminado y que los
+                  datos de la identificación sean legibles en la imagen.
+                </h6>
+              </div>
   <form-wizard title="" subtitle="" 
               color="#27ae60"
               nextButtonText="SIGUIENTE"
@@ -122,27 +137,30 @@
               finishButtonText="GUARDAR" 
               :selected="true" 
               @on-complete="onComplete">
+              
+              <br />
     <tab-content title="Rostro" :before-change="validateTabUno">
          <b-form>
             <b-form-group>
-              <div class="card-header">
-                <label class="control-label h1">Registro de Visitantes</label>
-                <h5>
-                  Para dar de alta a un visitante se requiere verificar su
-                  identidad.
-                </h5>
-                <h5>
-                  Se debe tomar una fotografía de frente y una imagen de su
-                  identificación.
-                </h5>
-                <h5>
-                  El lugar debe estar bien iluminado y se debe revisar que los
-                  datos de la identificación sean legibles en la imagen.
-                </h5>
-              </div>
-              <br />
-              <h5>FAVOR DE CAPTURAR UNA IMAGEN DE TU ROSTRO.</h5>
-              <div style="display: flex; justify-content: flex-start">
+              
+              <h5>Por favor, captura una imagen con tu rostro de frente.</h5>
+              
+              <div>
+                <div v-if="isCameraOpen" class="camera-canvas">
+                  <video
+                    v-show="true"
+                    ref="camera"
+                    :width="canvasWidth"
+                    :height="canvasHeight"
+                    playsinline
+                    autoplay
+                  ></video>
+                <div>
+                  <br>
+                </div>
+                  
+                </div>
+                <div style="display: flex; justify-content: flex-start">
                 <img
                   style="height: 100px"
                   v-if="isCameraOpen"
@@ -172,36 +190,22 @@
                     </div>
                   </button>
                 </div>
-              </div>
-              <div>
-                <div v-if="isCameraOpen" class="camera-canvas">
-                  <video
-                    v-show="true"
-                    ref="camera"
-                    :width="canvasWidth"
-                    :height="canvasHeight"
-                    playsinline
-                    autoplay
-                  ></video>
-                <div>
-                  <br>
-                </div>
-                  <canvas
+                <canvas
                     v-show="isPhotoTaken"
                     id="photoTaken"
                     ref="canvas"
                     :width="canvasWidthFoto"
                     :height="canvasHeightFoto"
                   ></canvas>
-                </div>
-                <button v-if="primerpaso"
+              </div>
+                <!-- <button v-if="primerpaso"
                   :disabled="habilitaBoton3"
                   class="btn btn mr-2 button_color_red"
                   @click="onResetCamRostro"
                   variant="danger"
                 >
                   Tomar otra fotografia
-                </button>
+                </button> -->
               </div>
             </b-form-group>
           </b-form>
@@ -212,7 +216,7 @@
             <b-form-group>
               <div class="camera-box">
                 <br />
-                <h5>FAVOR DE CAPTURAR UNA IMAGEN DE TU IDENTIFICACIÓN.</h5>
+                <h5>Por favor, captura una imagen del frente de tu identificación (INE).</h5>
                 <div style="display: flex; justify-content: flex-start">
                   <img
                     style="height: 100px"

@@ -6,11 +6,11 @@
    </div>
   <b-card no-body>
     <b-tabs card>
-      <b-tab title="Visita" active>
+      <!-- <b-tab title="Visita" active>
         <b-card-text>Visita</b-card-text>
-      </b-tab >  <!--end tab visita -->
+      </b-tab >  --> <!--end tab visita -->
 
-      <b-tab title="Evento" style="text-aling: center">
+      <b-tab title="Evento" style="text-aling: center" active>
           <b-form @submit="onSubmit" v-if="true">
             <b-form-group
               id="input-group-1"
@@ -57,7 +57,7 @@
               </div>
             </b-form-group> 
 
-      <b-form-group id="input-group-3" label="¿Esta será una visita recurrente semanal?" v-slot="{ ariaDescribedby }">
+      <!-- <b-form-group id="input-group-3" label="¿Esta será una visita recurrente semanal?" v-slot="{ ariaDescribedby }">
         <b-form-checkbox-group
           v-model="form.visita_semanal_recurrente_activa"
           id="checkboxes-3"
@@ -77,7 +77,7 @@
           <b-form-checkbox value=1>Si</b-form-checkbox>
           <b-form-checkbox value=0>No</b-form-checkbox>
         </b-form-checkbox-group>
-      </b-form-group>
+      </b-form-group> -->
 
             <b-button type="submit" :disabled="habilitaBoton" @submit="onSubmit" variant="primary">Guardar</b-button>
 
