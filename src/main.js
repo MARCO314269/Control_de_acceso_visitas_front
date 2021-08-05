@@ -20,7 +20,8 @@ import Vuelidate from "vuelidate"
 import DatePicker from 'ant-design-vue/lib/date-picker';
 import VueSessionStorage from "vue-sessionstorage";
 import VueCountdownTimer from 'vuejs-countdown-timer';
-
+import VueToast from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
 
 
 /*Vue.config.productionTip = false*/
@@ -34,14 +35,14 @@ Vue.use(Vuelidate);
 Vue.use(DatePicker);
 Vue.use(VueSessionStorage);
 Vue.use(VueCountdownTimer);
+Vue.use(VueToast);
 Vue.config.productionTip = false;
 
 Vue.component(Button.name, Button)
 
 Vue.config.productionTip = false
 
-
-/*axios.defaults.baseURL = process.env.VUE_APP_URL*/
+axios.defaults.baseURL = process.env.VUE_APP_URL
 
 new Vue({
   router, store,
