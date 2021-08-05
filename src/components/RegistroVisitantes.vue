@@ -288,7 +288,7 @@
             </button>
           </b-form>
     </tab-content>
-        <tab-content title="About You" :before-change="validateTabTres">
+        <tab-content title="Datos generales" :before-change="validateTabTres">
               <div class="form-group">
                  <b-form-group
                 id="input-group-1"
@@ -361,7 +361,7 @@
               </b-form-group>
               </div>
     </tab-content>
-    <tab-content>
+    <tab-content title="Datos de contacto">
     <div class="form-group">
       <b-form-group
                 id="input-group-5"
@@ -442,9 +442,14 @@
       <div class="container my-6">
 
             <div class="form-group">
-              <h6>
-                Tu registro fue exitoso, favor de mostrar este QR al entrar:
-              </h6>
+              Tu registro a
+              <h4>"{{ this.nombre_visita }}"</h4>
+              que se llevará a cabo del :
+              <h4>{{ this.fecha_inicio }}</h4>
+              al 
+              <br/>
+              <h4>{{ this.fecha_fin }}</h4>
+              ha sido exitoso, favor de mostrar el siguiente QR al entrar:
               <p>{{ this.url_visitante_id }}</p>
               <img :src="'data:image/jpeg;base64,' + img_data" />
             </div>
@@ -662,43 +667,15 @@ export default {
         this.form.nombre_contacto_emergencia.length > 3;
       return !dato;
     },
-    habilitaBoton3: function () {
-      var dato = true && this.form2.rostro_b64;
-      return !dato;
-    },
-    habilitaBoton4: function () {
-      var dato = true && this.form2.identificacion_b64;
-      return !dato;
-    },
     habilitaBoton5: function () {
       var dato = true && this.form3.email && emaiRegex.test(this.form3.email);
       return !dato;
-    },
-    habilitaBoton6: function () {
-      var dato =
-        true &&
-        this.form.nombre &&
-        this.form.nombre.length > 3 &&
-        this.form.apellido_paterno &&
-        this.form.apellido_paterno.length > 3 &&
-        this.form.apellido_materno &&
-        this.form.apellido_materno.length > 3 &&
-        this.form.genero
-        return !dato;
-    },
-    condition() {
-      this.mostrarCamaras;
-      this.mostrarCamaraRostro;
-      return this.mostrarCamaras == true && this.mostrarCamaraRostro == true;
-    },
-    condition2() {
-      this.mostrarCamaras;
-      return this.mostrarCamaras == true && this.mostrarCamaraRostro == false;
     },
   },
   created() {
     this.obtenerinfoVisita();
   },
+  
   methods: {
     validateState(nombre) {
       const { $dirty, $error } = this.$v.form[nombre];
@@ -968,6 +945,7 @@ export default {
       };
     },
     resetForm3() {
+      this.$v.form3.email.$reset();
       this.form3 = {
         email: "",
       };
@@ -1038,7 +1016,7 @@ export default {
      if(this.primerpaso == true){
        return true
      }else
-     this.mensajemodal = "Por favr toma una fotografia de tu Rostro para poder continuar" 
+     this.mensajemodal = "Por favor toma una fotografia de tu Rostro para poder continuar" 
      this.$modal.show("modal-pasos");
      return false;
    },
@@ -1054,7 +1032,7 @@ export default {
        this.$modal.show("modal-pasos");
      }
      }else 
-     this.mensajemodal = "Por favr toma una fotografia de tu Identificacion para poder continuar"
+     this.mensajemodal = "Por favor toma una fotografia de tu Identificacion para poder continuar"
       this.$modal.show("modal-pasos");
      return false;
    },
