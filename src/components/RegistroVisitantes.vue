@@ -214,10 +214,23 @@
     <tab-content  title="Identificacion" :before-change="validateTabDos">
           <b-form @submit="postRespuesta">
             <b-form-group>
-              <div class="camera-box">
                 <br />
                 <h5>Por favor, captura una imagen del frente de tu identificación (INE).</h5>
-                <div style="display: flex; justify-content: flex-start">
+                <div>
+                  <div v-if="isCameraOpen2" class="camera-canvas">
+                    <video
+                      v-show="true"
+                      ref="camera2"
+                      :width="canvasWidth"
+                      :height="canvasHeight"
+                      playsinline
+                      autoplay
+                    ></video>
+                  <div>
+                    <br>
+                  </div>
+                </div>
+                  <div style="display: flex; justify-content: flex-start">
                   <img
                     style="height: 100px"
                     v-if="isCameraOpen2"
@@ -246,42 +259,21 @@
                             class="button-img"
                             src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"
                         /></span>
-                        <span v-else
-                          ><img
-                            style="height: 100px"
-                            class="button-img"
-                            src="https://img.icons8.com/material-outlined/50/000000/cancel.png"
-                        /></span>
                       </div>
                     </button>
-                  </div>
-                </div>
-                <div>
-                  <div v-if="isCameraOpen2" class="camera-canvas">
-                    <video
-                      v-show="true"
-                      ref="camera"
-                      :width="canvasWidth"
-                      :height="canvasHeight"
-                      playsinline
-                      autoplay
-                    ></video>
-                  <div>
-                    <br>
                   </div>
                     <canvas
                       v-show="isPhotoTaken2"
                       id="photoTaken"
-                      ref="canvas"
+                      ref="canvas2"
                       :width="canvasWidthFoto"
                       :height="canvasHeightFoto"
                     ></canvas>
-                  </div>
                 </div>
-              </div>
+                </div>
             </b-form-group>
 
-            <button v-if="segundopaso"
+            <!-- <button v-if="segundopaso"
               :disabled="habilitaBoton4"
               class="btn btn mr-2 button_color_red"
               type="reiniciar"
@@ -289,7 +281,7 @@
               variant="danger"
             >
               Tomar otra fotografia
-            </button>
+            </button> -->
           </b-form>
     </tab-content>
         <tab-content title="Datos generales" :before-change="validateTabTres">
@@ -811,7 +803,7 @@ export default {
       navigator.mediaDevices
         .getUserMedia(constraints)
         .then((stream) => {
-          this.$refs.camera.srcObject = stream;
+          this.$refs.camera2.srcObject = stream;
         })
         .catch((error) => {
           alert("Browser doesn't support or there is some errors." + error);
@@ -831,23 +823,23 @@ export default {
       const FLASH_TIMEOUT = 50;
       let self = this;
       setTimeout(() => {
-        const context = self.$refs.canvas.getContext("2d");
+        const context = self.$refs.canvas2.getContext("2d");
         context.drawImage(
-          self.$refs.camera,
+          self.$refs.camera2,
           0,
           0,
           self.canvasWidthFoto,
           self.canvasHeightFoto
         );
-        const dataUrl = self.$refs.canvas
+        const dataUrl = self.$refs.canvas2
           .toDataURL()
           .replace("data:image/png;base64,", "");
         console.log(dataUrl);
         this.form2.identificacion_b64 = dataUrl;
         this.segundopaso = true;
         self.addToPhotoGallery(dataUrl);
-        self.isCameraOpen = false;
-        self.stopCameraStream();
+        self.isCameraOpen2 = false;
+        self.stopCameraStream2();
       }, FLASH_TIMEOUT);
     },
     onSubmit() {
@@ -1018,6 +1010,8 @@ export default {
     },
    validateTabUno: function(){
      if(this.primerpaso == true){
+        this.isCameraOpen2 = true;
+        this.startCameraStream2();
        return true
      }else
      this.mensajemodal = "Por favor toma una fotografia de tu Rostro para poder continuar" 
