@@ -4,7 +4,7 @@
     <div class="container-sm">
       <div class="row">
           <div>
-              <label style="font-size:40px;">Wyneb app</label>
+              <label style="font-size:40px;">App Control de Acceso</label>
           </div>
       </div>
      </div> 
