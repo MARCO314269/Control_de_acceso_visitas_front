@@ -364,10 +364,10 @@
                 label="Telefono celular:"
                 label-for="input-5"
               >
-                <b-form-input
+                <b-form-input  v-mask="maskphone"
                   id="input-5"
                   type="telefono_celular"
-                  v-model="$v.form.telefono_celular.$model"
+                  v-model.trim="$v.form.telefono_celular.$model"
                   :state="validateState('telefono_celular')"
                   placeholder="Ingresa tu telefono celular"
                 ></b-form-input>
@@ -382,7 +382,7 @@
                 label="Telefono particular:"
                 label-for="input-6"
               >
-                <b-form-input
+                <b-form-input v-mask="maskphone"
                   id="input-6"
                   @input="acceptNumber"
                   v-model="$v.form.telefono_particular.$model"
@@ -400,7 +400,7 @@
                 label="Telefono de emergencia:"
                 label-for="input-7"
               >
-                <b-form-input
+                <b-form-input v-mask="maskphone"
                   id="input-7"
                   v-model="$v.form.numero_emergencia.$model"
                   :state="validateState('numero_emergencia')"
@@ -521,7 +521,6 @@ import {
   alpha,
   minLength,
   maxLength,
-  integer,
   email,
 } from "vuelidate/lib/validators";
 const emaiRegex = new RegExp(
@@ -536,6 +535,7 @@ export default {
   },
    data() {
     return {
+      maskphone: ['(', /\d/, /\d/, ') ', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
       mensajemodal: "",
       animate: true,
       nombre_visita: "",
@@ -606,21 +606,18 @@ export default {
       genero: { required },
       telefono_celular: {
         required,
-        integer,
-        maxLength: maxLength(10),
-        minLength: minLength(10),
+        maxLength: maxLength(14),
+        minLength: minLength(14),
       },
       telefono_particular: {
         required,
-        integer,
-        maxLength: maxLength(10),
-        minLength: minLength(10),
+        maxLength: maxLength(14),
+        minLength: minLength(14),
       },
       numero_emergencia: {
         required,
-        integer,
-        maxLength: maxLength(10),
-        minLength: minLength(10),
+        maxLength: maxLength(14),
+        minLength: minLength(14),
       },
       nombre_contacto_emergencia: { required, minLength: minLength(3) },
     },
@@ -674,10 +671,6 @@ export default {
   },
   
   methods: {
-    acceptNumber() {
-        var x = this.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-         this.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-    },
     validateState(nombre) {
       const { $dirty, $error } = this.$v.form[nombre];
       return $dirty ? !$error : null;
@@ -1057,11 +1050,11 @@ export default {
       validateTabCuatro: function(){
      if(
         this.form.telefono_celular &&
-        this.form.telefono_celular.length == 10 && 
+        this.form.telefono_celular.length == 14 && 
         this.form.telefono_particular &&
-        this.form.telefono_particular.length == 10 &&
+        this.form.telefono_particular.length == 14 &&
         this.form.numero_emergencia &&
-        this.form.numero_emergencia.length == 10 &&
+        this.form.numero_emergencia.length == 14 &&
         this.form.nombre_contacto_emergencia &&
         this.form.nombre_contacto_emergencia.length > 3){
         return true;

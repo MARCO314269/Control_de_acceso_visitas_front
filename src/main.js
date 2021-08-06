@@ -22,12 +22,15 @@ import VueSessionStorage from "vue-sessionstorage";
 import VueCountdownTimer from 'vuejs-countdown-timer';
 import VueToast from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
+import VueMask from "v-mask";
+
 
 
 /*Vue.config.productionTip = false*/
 
 Vue.use(VModal)
 Vue.use(VueRouter, router)
+Vue.use(VueMask);
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueAxios, axios)
