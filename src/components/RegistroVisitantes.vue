@@ -511,6 +511,8 @@
 
 <script>
 import {FormWizard, TabContent} from 'vue-form-wizard'
+import Vue from "vue";
+import store from "../store";
 import "vue-step-wizard/dist/vue-step-wizard.css";
 import router from "../router";
 import axios from "axios";
@@ -700,12 +702,17 @@ export default {
           // alert(response.data.mensaje);
         })
         .catch((error) => {
-          this.msgErr = error;
-          if (error.response) {
-            this.msgErr = error.response.data["exceptionLongDescription"];
-          }
-        })
-        .finally(() => (this.loading = false));
+          this.mensaje_error =
+            "Existe un problema con el servidor. Intenta nuevamente.";
+          Vue.$toast.open({
+            message: this.mensaje_error,
+            type: "error",
+            duration: 8000,
+          });
+          console.log(this.mensaje_error);
+          console.log(error);
+          store.commit("setSession", {});
+        });
     },
     obtenerinfoVisita() {
       console.log(this.$route.params.id_detalle_visita);
@@ -720,6 +727,18 @@ export default {
           this.fecha_inicio = response.data.fecha_inicio;
           this.fecha_fin = response.data.fecha_fin;
           console.log(this.evento);
+        })
+        .catch((error) => {
+          this.mensaje_error =
+            "Existe un problema con el servidor. Intenta nuevamente.";
+          Vue.$toast.open({
+            message: this.mensaje_error,
+            type: "error",
+            duration: 8000,
+          });
+          console.log(this.mensaje_error);
+          console.log(error);
+          store.commit("setSession", {});
         });
     },
     closeModalCamaras() {
@@ -860,9 +879,17 @@ export default {
           this.$v.form.$touch();
         })
         .catch((error) => {
-          this.msgErr = error;
-        })
-        .finally(() => (this.loading = false));
+          this.mensaje_error =
+            "Existe un problema con el servidor. Intenta nuevamente.";
+          Vue.$toast.open({
+            message: this.mensaje_error,
+            type: "error",
+            duration: 8000,
+          });
+          console.log(this.mensaje_error);
+          console.log(error);
+          store.commit("setSession", {});
+        });
     },
     onSubmitFast() {
       this.form.id_detalle_visita = this.$route.params.id_detalle_visita;
@@ -881,14 +908,17 @@ export default {
           this.$v.form.$touch();
         })
         .catch((error) => {
-          this.msgErr = error;
-          if (this.insert) {
-            this.$modal.show("modal-exito");
-          } else {
-            this.$modal.show("modal-fallo");
-          }
-        })
-        .finally(() => (this.loading = false));
+          this.mensaje_error =
+            "Existe un problema con el servidor. Intenta nuevamente.";
+          Vue.$toast.open({
+            message: this.mensaje_error,
+            type: "error",
+            duration: 8000,
+          });
+          console.log(this.mensaje_error);
+          console.log(error);
+          store.commit("setSession", {});
+        });
     },
     buscaInfoPrevia() {
       if (this.form3.email) {
@@ -904,9 +934,17 @@ export default {
             this.closeInicio();
           })
           .catch((error) => {
-            console.log(error);
-            alert(error);
+          this.mensaje_error =
+            "Existe un problema con el servidor. Intenta nuevamente.";
+          Vue.$toast.open({
+            message: this.mensaje_error,
+            type: "error",
+            duration: 8000,
           });
+          console.log(this.mensaje_error);
+          console.log(error);
+          store.commit("setSession", {});
+        });
       } else {
         console.log("NO ENCONTTRE NADA");
       }
@@ -922,7 +960,16 @@ export default {
           console.log(this.img_data);
         })
         .catch((error) => {
+          this.mensaje_error =
+            "Existe un problema con el servidor. Intenta nuevamente.";
+          Vue.$toast.open({
+            message: this.mensaje_error,
+            type: "error",
+            duration: 8000,
+          });
+          console.log(this.mensaje_error);
           console.log(error);
+          store.commit("setSession", {});
         });
     },
     resetForm() {
