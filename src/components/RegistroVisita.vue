@@ -101,7 +101,9 @@
               <div class="card-body">
                   <div class="form-group">
                       <h6>Favor de compartir esta url con tus visitantes:</h6>
-                      <p>{{this.url_visitante_id}}</p>
+                      <a v-bind:href="''">
+                        {{ this.url_visitante_id }}
+                        </a>
                       <img :src="'data:image/jpeg;base64,'+img_data">
                   </div>
                   <div class="form-group my-4" style="text-align: right;">
@@ -133,6 +135,8 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import es_ES from 'ant-design-vue/lib/locale-provider/es_ES.js';
 
 moment.locale('es-mx');
+
+
   export default {
     mixins: [validationMixin],
 
@@ -154,7 +158,7 @@ moment.locale('es-mx');
         },
         inicio: null,
         fin: null,
-        url_visitante: 'localhost:8080/visitantes/',
+        url_visitante: process.env.VUE_APP_QR,
         es_ES,
         endOpen: false,
         url_visitante_id: "",
