@@ -121,6 +121,8 @@
 
 <script>
 //import Datepicker from 'vuejs-datepicker';
+import Vue from "vue";
+import store from "../store";
 import 'moment/locale/es.js';
 import moment from 'moment';
 import 'vue-datetime/dist/vue-datetime.css'
@@ -204,35 +206,50 @@ moment.locale('es-mx');
         this.$refs['my-modal'].hide();
       },
       onSubmit(event) {
+        const path_detalle_visita = "/detalle-visita"
         event.preventDefault()
         this.form.fecha_inicio = moment(new Date(this.form.fecha_inicio)).format('YYYY-MM-DD hh:mm:ss');
         this.form.fecha_fin = moment(new Date(this.form.fecha_fin)).format('YYYY-MM-DD hh:mm:ss');
-        axios.post('http://127.0.0.1:5000/detalle-visita', this.form).then(response => {
+        axios.post(path_detalle_visita, this.form).then(response => {
           this.id_detalle_visita = response.data.id_detalle_visita;
           this.url_visitante_id = this.url_visitante+this.id_detalle_visita;
           this.getQR (this.url_visitante_id)
           this.$refs['my-modal'].show();
           //this.$bvModal.show('modal-exito');
           //this.$modal.show('modal-exito');
-        }).catch(error => {
-          this.msgErr = error;
-          if(error.response) {
-              this.msgErr = error.response.data['exceptionLongDescription'];
-          }
-        }).finally(
-          () => this.loading = false
-        );
-      },
+        })
+        .catch((error) => {
+          this.mensaje_error =
+            "Existe un problema con el servidor. Intenta nuevamente.";
+          Vue.$toast.open({
+            message: this.mensaje_error,
+            type: "error",
+            duration: 8000,
+          });
+          console.log(this.mensaje_error);
+          console.log(error);
+          store.commit("setSession", {});
+        });
+    },
       getQR (mensaje) {
-      const path = 'http://localhost:5000/imagen_QR'
+      const path_imagen_qr = '/imagen_QR'
       const data = { "datos_para_qr": mensaje }
-      axios.post(path,data).then(response => {
+      axios.post(path_imagen_qr,data).then(response => {
         this.img_data = response.data.encoded_qr_data
         console.log(this.img_data)
       })
-      .catch((error) => {
-        console.log(error)
-      })
+        .catch((error) => {
+          this.mensaje_error =
+            "Existe un problema con el servidor. Intenta nuevamente.";
+          Vue.$toast.open({
+            message: this.mensaje_error,
+            type: "error",
+            duration: 8000,
+          });
+          console.log(this.mensaje_error);
+          console.log(error);
+          store.commit("setSession", {});
+        });
     },
     disabledDate(current) {
       // Can not select days before today and today
