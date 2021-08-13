@@ -101,7 +101,7 @@
               <div class="card-body">
                   <div class="form-group">
                       <h6>Favor de compartir esta url con tus visitantes:</h6>
-                      <a v-bind:href="''">
+                      <a v-bind:href="this.url_visitante_id">
                         {{ this.url_visitante_id }}
                         </a>
                       <img :src="'data:image/jpeg;base64,'+img_data">
@@ -219,6 +219,7 @@ moment.locale('es-mx');
           this.url_visitante_id = this.url_visitante+this.id_detalle_visita;
           this.getQR (this.url_visitante_id)
           this.$refs['my-modal'].show();
+          console.log(response)
           //this.$bvModal.show('modal-exito');
           //this.$modal.show('modal-exito');
         })
