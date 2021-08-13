@@ -102,7 +102,7 @@
                   <div class="form-group">
                       <h6>Favor de compartir esta url con tus visitantes:</h6>
                       <a v-bind:href="this.url_visitante_id">
-                        {{ this.url_visitante_id }}
+                        {{this.url_visitante_id}}
                         </a>
                       <img :src="'data:image/jpeg;base64,'+img_data">
                   </div>
